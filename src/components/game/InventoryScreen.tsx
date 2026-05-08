@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const RARITIES: Rarity[] = ["common", "uncommon", "rare", "epic", "legendary", "mythic"];
 
 export function InventoryScreen() {
-  const { state, setScreen, equip, unequip, useConsumable } = useGame();
+  const { state, setScreen, equip, unequip, useConsumable: consumeItem } = useGame();
   const [filter, setFilter] = useState("");
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [selectedCharId, setSelectedCharId] = useState(state.party[0].id);
@@ -48,7 +48,7 @@ export function InventoryScreen() {
         <div className="lg:col-span-2 panel p-4">
           <div className="flex flex-wrap gap-2 mb-3">
             <Input placeholder="Search items…" value={filter} onChange={e => { setFilter(e.target.value); setPage(0); }} className="max-w-xs" />
-            <select value={rarityFilter} onChange={e => { setRarityFilter(e.target.value as any); setPage(0); }}
+            <select value={rarityFilter} onChange={e => { setRarityFilter(toRarityFilter(e.target.value)); setPage(0); }}
               className="bg-input border border-border rounded px-2 text-sm">
               <option value="all">All rarities</option>
               {RARITIES.map(r => <option key={r} value={r}>{r}</option>)}
@@ -60,7 +60,7 @@ export function InventoryScreen() {
             {paged.map(({ itemId, quantity, item }) => (
               <ItemCell key={itemId} item={item} quantity={quantity}
                 onEquip={() => item.slot && equip(selectedChar.id, itemId)}
-                onUse={() => item.consumableEffect && useConsumable(itemId, selectedChar.id)}
+                onUse={() => item.consumableEffect && consumeItem(itemId, selectedChar.id)}
               />
             ))}
             {paged.length === 0 && <p className="col-span-full text-center text-muted-foreground text-sm py-8">No items match.</p>}
@@ -157,4 +157,9 @@ const glyphFor = (i: Item) => {
   if (i.category === "consumable") return "⚗";
   if (i.category === "key") return "🗝";
   return "◆";
+};
+
+const toRarityFilter = (value: string): Rarity | "all" => {
+  if (value === "all") return "all";
+  return RARITIES.includes(value as Rarity) ? value as Rarity : "all";
 };

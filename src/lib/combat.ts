@@ -59,7 +59,7 @@ export const applyAbilityToTarget = (
   baseDamageOrHeal: number,
   target: BattleCombatant
 ): BattleCombatant => {
-  let next = { ...target };
+  const next = { ...target };
   if (ability.kind === "attack") {
     next.hp = Math.max(0, next.hp - baseDamageOrHeal);
     if (next.hp === 0) next.isDown = true;
