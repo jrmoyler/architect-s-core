@@ -172,6 +172,7 @@ export interface AssetManifestEntry {
   frameWidth?: number;
   frameHeight?: number;
   publicPath?: string | null;
+  sourceFileOriginalName?: string;
   fallbackIcon: string;
   tags: string[];
 }
