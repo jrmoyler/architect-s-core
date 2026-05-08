@@ -2,6 +2,7 @@ import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
 import { ENEMIES } from "@/data/enemies";
+import { battleBackgroundAsset } from "@/lib/gameAssetSelectors";
 
 export function DivisionScreen() {
   const { state, setScreen, startBattle } = useGame();
@@ -9,12 +10,16 @@ export function DivisionScreen() {
   if (!div) return null;
   const quest = state.quests.find(q => q.id === div.questId);
   const boss = div.bossId ? ENEMIES[div.bossId] : undefined;
+  const divisionBackground = battleBackgroundAsset(div.id);
+  const panelStyle = divisionBackground
+    ? { backgroundImage: `linear-gradient(hsl(230 50% 11% / 0.78), hsl(230 50% 11% / 0.9)), url(${divisionBackground.filePath})` }
+    : undefined;
 
   return (
     <div className="min-h-screen p-4 md:p-8 max-w-5xl mx-auto">
       <Button variant="ghost" onClick={() => setScreen("hub")} className="mb-4">◂ Back to Nexus</Button>
 
-      <div className="panel-glow p-6 md:p-8">
+      <div className="panel-glow bg-cover bg-center p-6 md:p-8" style={panelStyle}>
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <PixelSprite spriteKey={div.envSpriteKey} size={140} className="w-32 h-32 md:w-36 md:h-36 shrink-0" />
           <div className="flex-1">

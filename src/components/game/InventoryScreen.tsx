@@ -2,14 +2,16 @@ import { useMemo, useState } from "react";
 import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PixelSprite } from "@/components/game/PixelSprite";
 import { ALL_ITEMS, ITEM_BY_ID, RARITY_COLOR, RARITY_GLOW } from "@/data/items";
+import { ASSET_BY_ID, resolveItemSpriteKey } from "@/lib/assets";
 import type { EquipSlot, Item, Rarity } from "@/types/game";
 import { cn } from "@/lib/utils";
 
 const RARITIES: Rarity[] = ["common", "uncommon", "rare", "epic", "legendary", "mythic"];
 
 export function InventoryScreen() {
-  const { state, setScreen, equip, unequip, useConsumable } = useGame();
+  const { state, setScreen, equip, unequip, useConsumable: consumeItem } = useGame();
   const [filter, setFilter] = useState("");
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [selectedCharId, setSelectedCharId] = useState(state.party[0].id);
@@ -46,7 +48,7 @@ export function InventoryScreen() {
         <div className="lg:col-span-2 panel p-4">
           <div className="flex flex-wrap gap-2 mb-3">
             <Input placeholder="Search items…" value={filter} onChange={e => { setFilter(e.target.value); setPage(0); }} className="max-w-xs" />
-            <select value={rarityFilter} onChange={e => { setRarityFilter(e.target.value as any); setPage(0); }}
+            <select value={rarityFilter} onChange={e => { setRarityFilter(e.target.value as Rarity | "all"); setPage(0); }}
               className="bg-input border border-border rounded px-2 text-sm">
               <option value="all">All rarities</option>
               {RARITIES.map(r => <option key={r} value={r}>{r}</option>)}
@@ -58,7 +60,7 @@ export function InventoryScreen() {
             {paged.map(({ itemId, quantity, item }) => (
               <ItemCell key={itemId} item={item} quantity={quantity}
                 onEquip={() => item.slot && equip(selectedChar.id, itemId)}
-                onUse={() => item.consumableEffect && useConsumable(itemId, selectedChar.id)}
+                onUse={() => item.consumableEffect && consumeItem(itemId, selectedChar.id)}
               />
             ))}
             {paged.length === 0 && <p className="col-span-full text-center text-muted-foreground text-sm py-8">No items match.</p>}
@@ -109,6 +111,8 @@ export function InventoryScreen() {
 
 function ItemCell({ item, quantity, onEquip, onUse }: { item: Item; quantity: number; onEquip: () => void; onUse: () => void }) {
   const [open, setOpen] = useState(false);
+  const spriteKey = resolveItemSpriteKey(item);
+  const hasImageAsset = Boolean(ASSET_BY_ID[spriteKey]?.publicPath || ASSET_BY_ID[spriteKey]?.sourceSheet);
   return (
     <div className="relative">
       <button
@@ -118,7 +122,11 @@ function ItemCell({ item, quantity, onEquip, onUse }: { item: Item; quantity: nu
           RARITY_COLOR[item.rarity], RARITY_GLOW[item.rarity]
         )}
       >
-        <span className="text-xl">{glyphFor(item)}</span>
+        {hasImageAsset ? (
+          <PixelSprite spriteKey={spriteKey} size={36} className="w-9 h-9" label={item.name} />
+        ) : (
+          <span className="text-xl">{glyphFor(item)}</span>
+        )}
         <span className="text-[9px] mt-0.5 line-clamp-1 w-full text-center">{item.name}</span>
         {quantity > 1 && <span className="absolute bottom-0 right-1 text-[10px] font-bold">×{quantity}</span>}
       </button>

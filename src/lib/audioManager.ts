@@ -63,7 +63,7 @@ class AudioManager {
     const el = this.getEl(id);
     if (!el) return;
     if (this.currentMusic && this.currentMusic !== el) {
-      try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch {}
+      try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch { /* Ignore browser audio state races. */ }
     }
     el.volume = this.master * this.music;
     el.play().catch(() => {});
@@ -72,7 +72,7 @@ class AudioManager {
 
   stopMusic() {
     if (!this.currentMusic) return;
-    try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch {}
+    try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch { /* Ignore browser audio state races. */ }
     this.currentMusic = null;
   }
 
@@ -84,7 +84,9 @@ class AudioManager {
       const clone = el.cloneNode(true) as HTMLAudioElement;
       clone.volume = this.master * this.sfx;
       clone.play().catch(() => {});
-    } catch {}
+    } catch {
+      /* Ignore browsers that block cloned audio playback. */
+    }
   }
 }
 

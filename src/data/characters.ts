@@ -92,10 +92,10 @@ export const DR_JOSEPH: Character = baseChar({
 });
 
 export const RESERVE: Character[] = [
-  baseChar({ id: "kenza", name: "Kenza", title: "Aether Link Pilot", role: "dps", bio: "Locked — meet at Aether Link." }),
-  baseChar({ id: "denzel", name: "Denzel", title: "Civic Core Speaker", role: "support", bio: "Locked — meet at Civic Core." }),
-  baseChar({ id: "arthur", name: "Arthur", title: "Obsidian Arc Sentinel", role: "tank", bio: "Locked — meet at Obsidian Arc." }),
-  baseChar({ id: "stanley", name: "Stanley", title: "Nexus Labs Tinkerer", role: "support", bio: "Locked — meet at Nexus Labs." }),
+  baseChar({ id: "kenza", name: "Kenza the Orchestrator", title: "Aether Link Pilot", role: "dps", spriteKey: "sprite-kenza", portraitKey: "portrait-kenza", bio: "Locked — meet at Aether Link." }),
+  baseChar({ id: "denzel", name: "Denzel the Agent", title: "Civic Core Speaker", role: "support", spriteKey: "sprite-denzel", portraitKey: "portrait-denzel", bio: "Locked — meet at Civic Core." }),
+  baseChar({ id: "arthur", name: "Arthur the Advisor", title: "Obsidian Arc Sentinel", role: "tank", spriteKey: "sprite-arthur", portraitKey: "portrait-arthur", bio: "Locked — meet at Obsidian Arc." }),
+  baseChar({ id: "stanley", name: "Stanley the Guardian", title: "Nexus Labs Tinkerer", role: "support", spriteKey: "sprite-stanley", portraitKey: "portrait-stanley", bio: "Locked — meet at Nexus Labs." }),
 ];
 
 export const STARTING_PARTY: Character[] = [HATAALII, DEVON, AHMED, DR_JOSEPH];

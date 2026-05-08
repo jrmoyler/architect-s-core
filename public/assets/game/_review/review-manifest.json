@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-05-08T05:43:13.808Z",
+  "sourceRoot": "tmp/imported-assets",
+  "status": "blocked-no-source-assets",
+  "summary": {
+    "imagesFound": 0,
+    "classified": 0,
+    "selectedActive": 0,
+    "duplicates": 0,
+    "unknown": 0,
+    "rejected": 0,
+    "spriteSheetsDetected": 0,
+    "spriteSheetsSliced": 0,
+    "individualSpritesGenerated": 0
+  },
+  "duplicates": [],
+  "unknown": [],
+  "rejected": [],
+  "badSlices": [],
+  "notes": [
+    "No image files were found. Extract the asset ZIP into tmp/imported-assets or pass a ZIP/path to this script."
+  ]
+}

@@ -23,8 +23,13 @@ export function PartyScreen() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
         {state.reserveParty.map(c => (
           <div key={c.id} className="panel p-3 opacity-60">
-            <p className="font-display text-sm">{c.name}</p>
-            <p className="text-[10px] text-muted-foreground">{c.title}</p>
+            <div className="flex gap-2">
+              <PixelSprite spriteKey={c.spriteKey} size={40} className="h-10 w-10" />
+              <div>
+                <p className="font-display text-sm">{c.name}</p>
+                <p className="text-[10px] text-muted-foreground">{c.title}</p>
+              </div>
+            </div>
             <p className="text-xs mt-2">{c.bio}</p>
           </div>
         ))}

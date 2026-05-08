@@ -4,15 +4,16 @@ import { ASSET_MANIFEST } from "@/lib/assets";
 import { AUDIO_REGISTRY } from "@/lib/audioManager";
 
 const FOLDERS = [
-  "/public/sprites/inventory/branded/",
-  "/public/sprites/inventory/cyberpunk/",
-  "/public/sprites/characters/",
-  "/public/sprites/enemies/",
-  "/public/sprites/environments/",
-  "/public/sprites/effects/",
-  "/public/sprites/ui/",
-  "/public/portraits/characters/",
-  "/public/portraits/npcs/",
+  "/public/assets/game/items/icons/",
+  "/public/assets/game/items/reference-cells/",
+  "/public/assets/game/characters/playable/",
+  "/public/assets/game/characters/portraits/",
+  "/public/assets/game/enemies/sprites/",
+  "/public/assets/game/environments/hubs/",
+  "/public/assets/game/environments/battle-backgrounds/",
+  "/public/assets/game/ui/icons/",
+  "/public/assets/game/sheets-original/",
+  "/public/assets/game/_review/",
   "/public/audio/themes/",
   "/public/audio/sfx/combat/",
   "/public/audio/sfx/ui/",
@@ -41,13 +42,13 @@ export function CodexScreen() {
         <section className="panel p-5">
           <h3 className="font-display text-cyan mb-2">Asset Pipeline</h3>
           <ol className="text-sm space-y-2 list-decimal list-inside text-foreground/80">
-            <li>Generate sprite sheets (Nano Banana 2) — 10×10 grids, 32×32 frames.</li>
-            <li>Slice and drop into the matching <code className="text-gold">/public/sprites/</code> folder.</li>
-            <li>Update <code className="text-gold">src/lib/assets.ts</code> manifest entries with <code>publicPath</code> or <code>sourceSheet+row+col</code>.</li>
+            <li>Extract the asset ZIP into <code className="text-gold">tmp/imported-assets/</code>.</li>
+            <li>Run <code className="text-gold">npm run assets:process</code> to classify, dedupe, preserve sheets, and slice regular grids.</li>
+            <li>Review <code className="text-gold">public/assets/game/asset-manifest.json</code> and <code className="text-gold">ASSET_INTEGRATION_REPORT.md</code>.</li>
             <li>Audio (Lyria 3): drop .wav files into <code className="text-gold">/public/audio/</code> — engine auto-detects.</li>
           </ol>
           <div className="mt-4 p-3 border border-dashed border-cyan/40 rounded text-xs text-muted-foreground">
-            Uploader UI placeholder — for v1, drop files directly into <code>/public/</code>.
+            Asset browser available at <code className="text-cyan">/dev/assets</code>.
           </div>
         </section>
 
