@@ -166,13 +166,13 @@ export interface AssetManifestEntry {
   id: string;
   name: string;
   category: "inventory" | "character" | "enemy" | "environment" | "effect" | "ui" | "portrait";
-  sourceSheet?: string; // path to sheet
+  sourceSheet?: string;
   row?: number;
   col?: number;
   frameWidth?: number;
   frameHeight?: number;
-  publicPath?: string; // direct PNG
-  fallbackIcon: string; // emoji or text
+  publicPath?: string | null;
+  fallbackIcon: string;
   tags: string[];
 }
 

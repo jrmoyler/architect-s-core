@@ -2,12 +2,22 @@ import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
 import { Progress } from "@/components/ui/progress";
+import { ARCHITECTS_SPIRE_PATH } from "@/data/envAssets";
+import { ASSET_BY_ID } from "@/lib/assets";
 
 export function HubScreen() {
   const { state, selectDivision, setScreen, saveGame } = useGame();
 
   return (
-    <div className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+    <div className="relative min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+      {/* Architect's Spire hub map as subtle background */}
+      {ARCHITECTS_SPIRE_PATH && (
+        <div
+          className="fixed inset-0 -z-10 bg-center bg-cover opacity-10 pointer-events-none"
+          style={{ backgroundImage: `url(${ARCHITECTS_SPIRE_PATH})`, imageRendering: "pixelated" }}
+          aria-hidden
+        />
+      )}
       <header className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <p className="font-display text-xs tracking-[0.4em] text-cyan glow-cyan">THE NEXUS</p>

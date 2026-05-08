@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
 import { Progress } from "@/components/ui/progress";
 import { xpForLevel } from "@/lib/progression";
+import { getCharacterAsset } from "@/data/characterAssets";
 
 export function PartyScreen() {
   const { state, setScreen } = useGame();
@@ -35,10 +36,24 @@ export function PartyScreen() {
 
 function CharCard({ c }: { c: ReturnType<typeof useGame>["state"]["party"][number] }) {
   const need = xpForLevel(c.level);
+  const charAsset = getCharacterAsset(c.id);
+  const turnaround = charAsset?.turnaround ?? null;
+
   return (
     <div className="panel p-4">
       <div className="flex gap-3 items-start">
-        <PixelSprite spriteKey={c.spriteKey} size={64} className="w-16 h-16" />
+        {/* Show turnaround sheet if available, else battle sprite, else glyph */}
+        {turnaround ? (
+          <img
+            src={turnaround}
+            alt={c.name}
+            className="w-24 h-16 object-contain pixel rounded border border-gold/30"
+            style={{ imageRendering: "pixelated" }}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+          />
+        ) : (
+          <PixelSprite spriteKey={c.spriteKey} size={64} className="w-16 h-16" />
+        )}
         <div className="flex-1">
           <p className="font-display text-lg text-gold">{c.name}</p>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.title} · {c.role}</p>

@@ -7,6 +7,8 @@ import { ENEMIES } from "@/data/enemies";
 import { synergyTier, tierColor, canCombo } from "@/lib/synergy";
 import { ITEM_BY_ID } from "@/data/items";
 import { cn } from "@/lib/utils";
+import { ASSET_BY_ID } from "@/lib/assets";
+import { DEFAULT_BATTLE_BG_PATH } from "@/data/envAssets";
 
 export function BattleScreen() {
   const { state, performAbility, setScreen } = useGame();
@@ -65,7 +67,15 @@ export function BattleScreen() {
       <div className="flex-1 grid grid-rows-2 gap-3 px-3">
         {/* Enemies */}
         <div className="panel p-4 relative overflow-hidden">
-          <div className="absolute inset-0 stars-bg opacity-30 pointer-events-none" />
+          {/* Battle background art */}
+          {DEFAULT_BATTLE_BG_PATH && (
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-25 pointer-events-none"
+              style={{ backgroundImage: `url(${DEFAULT_BATTLE_BG_PATH})` }}
+              aria-hidden
+            />
+          )}
+          <div className="absolute inset-0 stars-bg opacity-20 pointer-events-none" />
           <p className="font-display text-xs text-destructive mb-3 tracking-widest">ENEMIES</p>
           <div className="relative flex flex-wrap items-end gap-4 justify-center min-h-[140px]">
             {battle.enemies.map(en => {

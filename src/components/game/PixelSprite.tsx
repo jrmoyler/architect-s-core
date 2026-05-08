@@ -1,4 +1,4 @@
-import { ASSET_BY_ID, computeSpriteStyle } from "@/lib/assets";
+import { ASSET_BY_ID, computeSpriteStyle, resolveSpritePath } from "@/lib/assets";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -10,19 +10,40 @@ interface Props {
 
 export function PixelSprite({ spriteKey, size = 64, className, label }: Props) {
   const entry = ASSET_BY_ID[spriteKey];
-  const sliced = entry?.sourceSheet && entry.row != null && entry.col != null;
-  const style = sliced ? computeSpriteStyle(entry) : undefined;
 
+  // Priority 1: sprite-sheet clip
+  const sliced = entry?.sourceSheet && entry.row != null && entry.col != null;
   if (sliced) {
-    return <div className={cn("pixel inline-block", className)} style={style} aria-label={label || entry?.name} />;
+    return (
+      <div
+        className={cn("pixel inline-block", className)}
+        style={computeSpriteStyle(entry)}
+        aria-label={label || entry?.name}
+      />
+    );
   }
-  // Fallback: glyph in a pixel-art frame
+
+  // Priority 2: direct PNG (publicPath from manifest or character registry)
+  const imgPath = resolveSpritePath(spriteKey);
+  if (imgPath) {
+    return (
+      <img
+        src={imgPath}
+        alt={label || entry?.name || spriteKey}
+        className={cn("pixel object-contain", className)}
+        style={{ width: size, height: size, imageRendering: "pixelated" }}
+        onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+      />
+    );
+  }
+
+  // Priority 3: glyph fallback
   return (
     <div
       className={cn(
         "pixel inline-flex items-center justify-center rounded-md border border-border/60",
         "bg-gradient-to-br from-muted to-card relative overflow-hidden",
-        className
+        className,
       )}
       style={{ width: size, height: size }}
       aria-label={label || entry?.name || spriteKey}
