@@ -2,9 +2,11 @@ import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
 import { Progress } from "@/components/ui/progress";
+import { hubEnvironmentAsset } from "@/lib/gameAssetSelectors";
 
 export function HubScreen() {
   const { state, selectDivision, setScreen, saveGame } = useGame();
+  const hubArt = hubEnvironmentAsset();
 
   return (
     <div className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
@@ -22,6 +24,20 @@ export function HubScreen() {
           <Button variant="default" className="bg-gold text-void hover:bg-gold/90" onClick={() => saveGame()}>Save</Button>
         </div>
       </header>
+
+      {hubArt && (
+        <section className="panel-glow mb-6 overflow-hidden">
+          <img
+            src={hubArt.filePath}
+            alt={hubArt.canonicalName}
+            className="pixel h-56 w-full object-cover"
+            draggable={false}
+          />
+          <div className="border-t border-gold/20 px-4 py-2 text-xs text-muted-foreground">
+            Active hub asset: <span className="text-gold">{hubArt.canonicalName}</span>
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
         {state.divisions.map(d => (

@@ -1,11 +1,13 @@
 import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { audio } from "@/lib/audioManager";
+import { titleArtAsset } from "@/lib/gameAssetSelectors";
 import { useEffect, useState } from "react";
 
 export function TitleScreen() {
   const { setScreen, newGame, loadGame } = useGame();
   const [hasSave, setHasSave] = useState(false);
+  const titleArt = titleArtAsset();
   useEffect(() => {
     import("@/lib/saveSystem").then(m => m.saveSystem.exists().then(setHasSave));
   }, []);
@@ -17,6 +19,14 @@ export function TitleScreen() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      {titleArt && (
+        <img
+          src={titleArt.filePath}
+          alt={titleArt.canonicalName}
+          className="pixel absolute inset-0 h-full w-full object-cover opacity-45"
+          draggable={false}
+        />
+      )}
       <div className="absolute inset-0 stars-bg opacity-80" aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 

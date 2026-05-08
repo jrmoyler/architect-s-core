@@ -7,6 +7,7 @@ import { ENEMIES } from "@/data/enemies";
 import { synergyTier, tierColor, canCombo } from "@/lib/synergy";
 import { ITEM_BY_ID } from "@/data/items";
 import { cn } from "@/lib/utils";
+import { battleBackgroundAsset } from "@/lib/gameAssetSelectors";
 
 export function BattleScreen() {
   const { state, performAbility, setScreen } = useGame();
@@ -20,6 +21,10 @@ export function BattleScreen() {
   const isPartyTurn = battle.party.some(p => p.refId === currentRefId);
   const activeChar = state.party.find(c => c.id === currentRefId);
   const activeCombatant = battle.party.find(p => p.refId === currentRefId);
+  const battleBackground = battleBackgroundAsset(battle.encounterId);
+  const battlefieldStyle = battleBackground
+    ? { backgroundImage: `linear-gradient(hsl(230 60% 8% / 0.62), hsl(230 60% 8% / 0.74)), url(${battleBackground.filePath})` }
+    : undefined;
 
   const consumables = state.inventory
     .map(i => ({ ...i, item: ITEM_BY_ID[i.itemId] }))
@@ -64,7 +69,7 @@ export function BattleScreen() {
       {/* Battlefield */}
       <div className="flex-1 grid grid-rows-2 gap-3 px-3">
         {/* Enemies */}
-        <div className="panel p-4 relative overflow-hidden">
+        <div className="panel p-4 relative overflow-hidden bg-cover bg-center" style={battlefieldStyle}>
           <div className="absolute inset-0 stars-bg opacity-30 pointer-events-none" />
           <p className="font-display text-xs text-destructive mb-3 tracking-widest">ENEMIES</p>
           <div className="relative flex flex-wrap items-end gap-4 justify-center min-h-[140px]">
@@ -99,7 +104,7 @@ export function BattleScreen() {
         </div>
 
         {/* Party */}
-        <div className="panel p-4 relative">
+        <div className="panel p-4 relative overflow-hidden bg-cover bg-center" style={battlefieldStyle}>
           <p className="font-display text-xs text-cyan mb-3 tracking-widest">PARTY</p>
           <div className="flex flex-wrap gap-3 justify-center">
             {battle.party.map(pc => {
