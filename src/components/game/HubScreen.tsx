@@ -2,6 +2,12 @@ import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
 import { Progress } from "@/components/ui/progress";
+import { activeAssetManifest } from "@/data/assetManifest";
+import { divisionAssetByDivisionId } from "@/data/divisionAssets";
+
+const nexusHubArt = activeAssetManifest.find((asset) =>
+  ["hub", "map", "nexus"].some((tag) => asset.visualTags.includes(tag) || asset.likelyUsage.includes(tag)),
+);
 
 export function HubScreen() {
   const { state, selectDivision, setScreen, saveGame } = useGame();
@@ -23,14 +29,39 @@ export function HubScreen() {
         </div>
       </header>
 
+      {nexusHubArt && (
+        <section className="panel-glow mb-4 overflow-hidden">
+          <img
+            src={nexusHubArt.filePath}
+            alt={nexusHubArt.canonicalName}
+            className="pixel h-56 w-full object-cover opacity-90"
+            style={{ imageRendering: "pixelated" }}
+            draggable={false}
+          />
+        </section>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-        {state.divisions.map(d => (
+        {state.divisions.map(d => {
+          const divisionAsset = divisionAssetByDivisionId[d.id];
+          const background = divisionAsset?.background ?? divisionAsset?.map;
+          return (
           <div key={d.id}
-            className={`panel p-4 flex flex-col gap-2 transition-all ${
+            className={`panel p-4 flex flex-col gap-2 transition-all relative overflow-hidden ${
               d.playable ? "hover:panel-glow hover:scale-[1.02] cursor-pointer" : "opacity-70"
             }`}
             onClick={() => d.playable && selectDivision(d.id)}
           >
+            {background && (
+              <img
+                src={background}
+                alt=""
+                className="pixel absolute inset-0 h-full w-full object-cover opacity-20"
+                style={{ imageRendering: "pixelated" }}
+                draggable={false}
+              />
+            )}
+            <div className="relative flex flex-col gap-2">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
                 <PixelSprite spriteKey={d.envSpriteKey} size={40} className="w-10 h-10" />
@@ -66,8 +97,10 @@ export function HubScreen() {
                 <div className="h-full bg-destructive/70" style={{ width: `${d.corruption}%` }} />
               </div>
             </div>
+            </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
 import { Progress } from "@/components/ui/progress";
 import { xpForLevel } from "@/lib/progression";
+import { characterAssets } from "@/data/characterAssets";
 
 export function PartyScreen() {
   const { state, setScreen } = useGame();
@@ -22,10 +23,13 @@ export function PartyScreen() {
       <h3 className="font-display text-lg text-cyan mt-6 mb-2">Reserve · Locked</h3>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
         {state.reserveParty.map(c => (
-          <div key={c.id} className="panel p-3 opacity-60">
-            <p className="font-display text-sm">{c.name}</p>
-            <p className="text-[10px] text-muted-foreground">{c.title}</p>
-            <p className="text-xs mt-2">{c.bio}</p>
+          <div key={c.id} className="panel p-3 opacity-60 flex gap-3">
+            <CharacterVisual charId={c.id} spriteKey={c.spriteKey} name={c.name} size={44} className="h-11 w-11 shrink-0" />
+            <div>
+              <p className="font-display text-sm">{c.name}</p>
+              <p className="text-[10px] text-muted-foreground">{c.title}</p>
+              <p className="text-xs mt-2">{c.bio}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -38,7 +42,7 @@ function CharCard({ c }: { c: ReturnType<typeof useGame>["state"]["party"][numbe
   return (
     <div className="panel p-4">
       <div className="flex gap-3 items-start">
-        <PixelSprite spriteKey={c.spriteKey} size={64} className="w-16 h-16" />
+        <CharacterVisual charId={c.id} spriteKey={c.spriteKey} name={c.name} size={64} className="w-16 h-16" />
         <div className="flex-1">
           <p className="font-display text-lg text-gold">{c.name}</p>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.title} · {c.role}</p>
@@ -75,6 +79,38 @@ function CharCard({ c }: { c: ReturnType<typeof useGame>["state"]["party"][numbe
       </div>
     </div>
   );
+}
+
+function CharacterVisual({
+  charId,
+  spriteKey,
+  name,
+  size,
+  className,
+}: {
+  charId: string;
+  spriteKey: string;
+  name: string;
+  size: number;
+  className: string;
+}) {
+  const mapped = characterAssets[charId as keyof typeof characterAssets];
+  const path = mapped?.portrait ?? mapped?.sprite;
+
+  if (path) {
+    return (
+      <img
+        src={path}
+        alt={name}
+        className={`pixel object-contain ${className}`}
+        style={{ width: size, height: size, imageRendering: "pixelated" }}
+        draggable={false}
+        loading="lazy"
+      />
+    );
+  }
+
+  return <PixelSprite spriteKey={mapped?.fallbackSpriteKey ?? spriteKey} size={size} className={className} label={name} />;
 }
 
 function Stat({ label, cur, max, color }: { label: string; cur: number; max: number; color: string }) {

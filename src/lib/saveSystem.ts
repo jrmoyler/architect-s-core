@@ -16,15 +16,25 @@ export const localAdapter: SaveAdapter = {
       const raw = localStorage.getItem(KEY);
       if (!raw) return null;
       return JSON.parse(raw) as GameState;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   },
   async save(state) {
     try {
       const slim = { ...state, battle: undefined };
       localStorage.setItem(KEY, JSON.stringify({ ...slim, saveTimestamp: Date.now() }));
-    } catch {}
+    } catch {
+      // Local storage can be unavailable in private or embedded browser contexts.
+    }
   },
-  async clear() { try { localStorage.removeItem(KEY); } catch {} },
+  async clear() {
+    try {
+      localStorage.removeItem(KEY);
+    } catch {
+      // Local storage can be unavailable in private or embedded browser contexts.
+    }
+  },
   async exists() { return !!localStorage.getItem(KEY); },
 };
 

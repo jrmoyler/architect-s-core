@@ -52,6 +52,7 @@ class AudioManager {
         el.loop = !!asset.loop;
         this.cache.set(id, el);
       } catch {
+        // Audio construction can fail in placeholder/browser-restricted contexts.
         return null;
       }
     }
@@ -63,16 +64,22 @@ class AudioManager {
     const el = this.getEl(id);
     if (!el) return;
     if (this.currentMusic && this.currentMusic !== el) {
-      try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch {}
+      try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch {
+        // Ignore browser audio teardown errors; gameplay should continue.
+      }
     }
     el.volume = this.master * this.music;
-    el.play().catch(() => {});
+    el.play().catch(() => {
+      // Autoplay restrictions are non-fatal.
+    });
     this.currentMusic = el;
   }
 
   stopMusic() {
     if (!this.currentMusic) return;
-    try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch {}
+    try { this.currentMusic.pause(); this.currentMusic.currentTime = 0; } catch {
+      // Ignore browser audio teardown errors.
+    }
     this.currentMusic = null;
   }
 
@@ -83,8 +90,12 @@ class AudioManager {
     try {
       const clone = el.cloneNode(true) as HTMLAudioElement;
       clone.volume = this.master * this.sfx;
-      clone.play().catch(() => {});
-    } catch {}
+      clone.play().catch(() => {
+        // Autoplay restrictions are non-fatal.
+      });
+    } catch {
+      // SFX failures should not affect combat flow.
+    }
   }
 }
 
