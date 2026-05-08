@@ -2,17 +2,27 @@ import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { ASSET_MANIFEST } from "@/lib/assets";
 import { AUDIO_REGISTRY } from "@/lib/audioManager";
+import { activeAssetManifest, activeAssetsByCategory, assetImportStatus } from "@/data/assetManifest";
+import { spriteSheetRegistry, spriteSheetImportStatus } from "@/data/spriteSheetRegistry";
 
 const FOLDERS = [
-  "/public/sprites/inventory/branded/",
-  "/public/sprites/inventory/cyberpunk/",
-  "/public/sprites/characters/",
-  "/public/sprites/enemies/",
-  "/public/sprites/environments/",
-  "/public/sprites/effects/",
-  "/public/sprites/ui/",
-  "/public/portraits/characters/",
-  "/public/portraits/npcs/",
+  "/public/assets/game/items/icons/",
+  "/public/assets/game/items/reference-cells/",
+  "/public/assets/game/items/branded/",
+  "/public/assets/game/items/cyberpunk/",
+  "/public/assets/game/characters/sprites/",
+  "/public/assets/game/characters/turnarounds/",
+  "/public/assets/game/characters/portraits/",
+  "/public/assets/game/enemies/regular/",
+  "/public/assets/game/enemies/bosses/",
+  "/public/assets/game/environments/hubs/",
+  "/public/assets/game/environments/battle-backgrounds/",
+  "/public/assets/game/environments/division-realms/",
+  "/public/assets/game/ui/icons/",
+  "/public/assets/game/sheets-original/",
+  "/public/assets/game/_review/duplicates/",
+  "/public/assets/game/_review/unknown/",
+  "/public/assets/game/_review/rejected/",
   "/public/audio/themes/",
   "/public/audio/sfx/combat/",
   "/public/audio/sfx/ui/",
@@ -62,6 +72,56 @@ export function CodexScreen() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="panel p-5 md:col-span-2">
+          <h3 className="font-display text-cyan mb-2">Imported Game Assets ({assetImportStatus.activeAssetCount})</h3>
+          {activeAssetManifest.length === 0 ? (
+            <div className="rounded border border-dashed border-gold/40 p-4 text-xs text-muted-foreground">
+              {assetImportStatus.blocker}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {Object.entries(activeAssetsByCategory).map(([category, assets]) => (
+                <div key={category}>
+                  <p className="font-display text-xs uppercase tracking-widest text-gold mb-2">{category}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {assets.map((asset) => (
+                      <div key={asset.id} className="rounded border border-border p-2 text-xs">
+                        <img
+                          src={asset.filePath}
+                          alt={asset.canonicalName}
+                          className="pixel mb-2 h-24 w-full object-contain bg-background/60"
+                          style={{ imageRendering: "pixelated" }}
+                          loading="lazy"
+                          draggable={false}
+                        />
+                        <p className="font-display text-[11px] text-cyan line-clamp-1">{asset.id}</p>
+                        <p className="text-[10px] text-muted-foreground">Q{asset.qualityScore} · C{asset.confidence}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="panel p-5 md:col-span-2">
+          <h3 className="font-display text-cyan mb-2">Sprite Sheet Registry ({spriteSheetRegistry.length})</h3>
+          {spriteSheetRegistry.length === 0 ? (
+            <p className="text-xs text-muted-foreground">{spriteSheetImportStatus.blocker}</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-2 text-xs">
+              {spriteSheetRegistry.map((sheet) => (
+                <div key={sheet.id} className="rounded border border-border p-2">
+                  <p className="font-display text-gold">{sheet.id}</p>
+                  <p>{sheet.sheetType} · {sheet.rows}×{sheet.columns}</p>
+                  <p className="text-muted-foreground">{sheet.slicedAssetIds.length} slices · confidence {sheet.confidence}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="panel p-5 md:col-span-2">

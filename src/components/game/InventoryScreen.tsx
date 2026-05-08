@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PixelSprite } from "./PixelSprite";
 import { ALL_ITEMS, ITEM_BY_ID, RARITY_COLOR, RARITY_GLOW } from "@/data/items";
+import { resolveItemAssetId } from "@/data/itemAssets";
 import type { EquipSlot, Item, Rarity } from "@/types/game";
 import { cn } from "@/lib/utils";
 
@@ -109,6 +111,7 @@ export function InventoryScreen() {
 
 function ItemCell({ item, quantity, onEquip, onUse }: { item: Item; quantity: number; onEquip: () => void; onUse: () => void }) {
   const [open, setOpen] = useState(false);
+  const assetId = resolveItemAssetId(item);
   return (
     <div className="relative">
       <button
@@ -118,7 +121,11 @@ function ItemCell({ item, quantity, onEquip, onUse }: { item: Item; quantity: nu
           RARITY_COLOR[item.rarity], RARITY_GLOW[item.rarity]
         )}
       >
-        <span className="text-xl">{glyphFor(item)}</span>
+        {assetId ? (
+          <PixelSprite spriteKey={assetId} size={36} className="w-9 h-9" label={item.name} />
+        ) : (
+          <span className="text-xl">{glyphFor(item)}</span>
+        )}
         <span className="text-[9px] mt-0.5 line-clamp-1 w-full text-center">{item.name}</span>
         {quantity > 1 && <span className="absolute bottom-0 right-1 text-[10px] font-bold">×{quantity}</span>}
       </button>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ASSET_BY_ID, computeSpriteStyle } from "@/lib/assets";
 import { cn } from "@/lib/utils";
 
@@ -9,9 +10,25 @@ interface Props {
 }
 
 export function PixelSprite({ spriteKey, size = 64, className, label }: Props) {
+  const [failedPath, setFailedPath] = useState<string | null>(null);
   const entry = ASSET_BY_ID[spriteKey];
   const sliced = entry?.sourceSheet && entry.row != null && entry.col != null;
+  const publicPath = entry?.publicPath && failedPath !== entry.publicPath ? entry.publicPath : null;
   const style = sliced ? computeSpriteStyle(entry) : undefined;
+
+  if (publicPath) {
+    return (
+      <img
+        src={publicPath}
+        alt={label || entry?.name || spriteKey}
+        className={cn("pixel inline-block object-contain", className)}
+        style={{ width: size, height: size, imageRendering: "pixelated" }}
+        loading="lazy"
+        draggable={false}
+        onError={() => setFailedPath(publicPath)}
+      />
+    );
+  }
 
   if (sliced) {
     return <div className={cn("pixel inline-block", className)} style={style} aria-label={label || entry?.name} />;

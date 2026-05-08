@@ -1,0 +1,167 @@
+export interface DivisionAssetMapping {
+  name: string;
+  background: string | null;
+  map: string | null;
+  battleBackground: string | null;
+  fallbackSpriteKey: string;
+  confidence: number;
+  notes: string;
+}
+
+export const divisionAssets = {
+  zenflow: {
+    name: "ZenFlow",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-zen",
+    confidence: 0,
+    notes: "No division-specific imported art available; using existing environment fallback.",
+  },
+  kineticEdge: {
+    name: "Kinetic Edge",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-kinetic",
+    confidence: 0,
+    notes: "Playable division prepared for real stadium/battle art once the asset ZIP is available.",
+  },
+  quantumLedger: {
+    name: "Quantum Ledger",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-quantum",
+    confidence: 0,
+    notes: "Playable division prepared for real market/trading-floor art once the asset ZIP is available.",
+  },
+  civicCore: {
+    name: "Civic Core",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-civic",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  hybridLiving: {
+    name: "Hybrid Living",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-hybrid",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  vitalHelix: {
+    name: "Vital Helix",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-helix",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  binaryLoom: {
+    name: "Binary Loom",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-loom",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  gaiaSynthesis: {
+    name: "Gaia Synthesis",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-gaia",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  vectorShift: {
+    name: "Vector Shift",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-vector",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  animusPrime: {
+    name: "Animus Prime",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-animus",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  aetherLink: {
+    name: "Aether Link",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-aether",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  obsidianArc: {
+    name: "Obsidian Arc",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-obsidian",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  terraAxis: {
+    name: "Terra Axis",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-terra",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  nexusLabs: {
+    name: "Nexus Labs",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-labs",
+    confidence: 0,
+    notes: "No division-specific imported art available.",
+  },
+  theCollective: {
+    name: "The Collective",
+    background: null,
+    map: null,
+    battleBackground: null,
+    fallbackSpriteKey: "env-collective",
+    confidence: 0,
+    notes: "No endgame Collective environment art available.",
+  },
+} satisfies Record<string, DivisionAssetMapping>;
+
+export type DivisionAssetId = keyof typeof divisionAssets;
+
+export const divisionAssetByDivisionId: Record<string, DivisionAssetMapping> = {
+  zenflow: divisionAssets.zenflow,
+  "kinetic-edge": divisionAssets.kineticEdge,
+  "quantum-ledger": divisionAssets.quantumLedger,
+  "civic-core": divisionAssets.civicCore,
+  "hybrid-living": divisionAssets.hybridLiving,
+  "vital-helix": divisionAssets.vitalHelix,
+  "binary-loom": divisionAssets.binaryLoom,
+  "gaia-synthesis": divisionAssets.gaiaSynthesis,
+  "vector-shift": divisionAssets.vectorShift,
+  "animus-prime": divisionAssets.animusPrime,
+  "aether-link": divisionAssets.aetherLink,
+  "obsidian-arc": divisionAssets.obsidianArc,
+  "terra-axis": divisionAssets.terraAxis,
+  "nexus-labs": divisionAssets.nexusLabs,
+  "the-collective": divisionAssets.theCollective,
+};

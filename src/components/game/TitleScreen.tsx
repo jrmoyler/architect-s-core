@@ -2,12 +2,19 @@ import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { audio } from "@/lib/audioManager";
 import { useEffect, useState } from "react";
+import { activeAssetManifest, assetImportStatus } from "@/data/assetManifest";
+import { saveSystem } from "@/lib/saveSystem";
+
+const titleArt = activeAssetManifest.find((asset) =>
+  ["title", "promotional", "environment"].some((category) => asset.category.toLowerCase().includes(category)) &&
+  (asset.likelyUsage.includes("title-screen") || asset.likelyUsage.includes("main-menu") || asset.selectedAsBest),
+);
 
 export function TitleScreen() {
   const { setScreen, newGame, loadGame } = useGame();
   const [hasSave, setHasSave] = useState(false);
   useEffect(() => {
-    import("@/lib/saveSystem").then(m => m.saveSystem.exists().then(setHasSave));
+    saveSystem.exists().then(setHasSave);
   }, []);
 
   const handleContinue = async () => {
@@ -17,6 +24,15 @@ export function TitleScreen() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      {titleArt && (
+        <img
+          src={titleArt.filePath}
+          alt={titleArt.canonicalName}
+          className="pixel absolute inset-0 h-full w-full object-cover opacity-35"
+          style={{ imageRendering: "pixelated" }}
+          draggable={false}
+        />
+      )}
       <div className="absolute inset-0 stars-bg opacity-80" aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 
@@ -48,6 +64,11 @@ export function TitleScreen() {
         <p className="mt-12 text-xs text-muted-foreground/70">
           {audio.isPlaceholderMode() ? "🎵 Audio placeholder mode — drop .wav files into /public/audio/ to enable" : "🎵 Audio enabled"}
         </p>
+        {assetImportStatus.activeAssetCount === 0 && (
+          <p className="mt-2 text-[10px] text-muted-foreground/60">
+            Visual asset pack pending — gameplay is using safe pixel-frame fallbacks.
+          </p>
+        )}
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { ENEMIES } from "@/data/enemies";
 import { synergyTier, tierColor, canCombo } from "@/lib/synergy";
 import { ITEM_BY_ID } from "@/data/items";
+import { resolveItemAssetId } from "@/data/itemAssets";
+import { divisionAssetByDivisionId } from "@/data/divisionAssets";
 import { cn } from "@/lib/utils";
 
 export function BattleScreen() {
@@ -20,6 +22,8 @@ export function BattleScreen() {
   const isPartyTurn = battle.party.some(p => p.refId === currentRefId);
   const activeChar = state.party.find(c => c.id === currentRefId);
   const activeCombatant = battle.party.find(p => p.refId === currentRefId);
+  const battleBackground = divisionAssetByDivisionId[battle.encounterId]?.battleBackground
+    ?? divisionAssetByDivisionId[battle.encounterId]?.background;
 
   const consumables = state.inventory
     .map(i => ({ ...i, item: ITEM_BY_ID[i.itemId] }))
@@ -65,7 +69,17 @@ export function BattleScreen() {
       <div className="flex-1 grid grid-rows-2 gap-3 px-3">
         {/* Enemies */}
         <div className="panel p-4 relative overflow-hidden">
-          <div className="absolute inset-0 stars-bg opacity-30 pointer-events-none" />
+          {battleBackground ? (
+            <img
+              src={battleBackground}
+              alt=""
+              className="pixel absolute inset-0 h-full w-full object-cover opacity-25 pointer-events-none"
+              style={{ imageRendering: "pixelated" }}
+              draggable={false}
+            />
+          ) : (
+            <div className="absolute inset-0 stars-bg opacity-30 pointer-events-none" />
+          )}
           <p className="font-display text-xs text-destructive mb-3 tracking-widest">ENEMIES</p>
           <div className="relative flex flex-wrap items-end gap-4 justify-center min-h-[140px]">
             {battle.enemies.map(en => {
@@ -166,11 +180,15 @@ export function BattleScreen() {
               <p className="font-display text-sm text-gold mb-2">Use Item</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-auto">
                 {consumables.length === 0 && <p className="text-xs text-muted-foreground">No consumables.</p>}
-                {consumables.map(c => (
+                {consumables.map(c => {
+                  const itemAssetId = resolveItemAssetId(c.item);
+                  return (
                   <Button key={c.itemId} variant="outline" size="sm" onClick={() => onUseItem(c.itemId)}>
+                    {itemAssetId && <PixelSprite spriteKey={itemAssetId} size={20} className="mr-1 h-5 w-5" label={c.item.name} />}
                     {c.item.name} <span className="ml-2 text-muted-foreground">×{c.quantity}</span>
                   </Button>
-                ))}
+                  );
+                })}
               </div>
               <Button variant="ghost" size="sm" className="mt-2" onClick={() => setShowItems(false)}>Cancel</Button>
             </div>

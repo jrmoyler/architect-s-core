@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-05-08T06:07:03.394Z",
+  "source": "Asset ZIP was not available in the workspace during this pass.",
+  "duplicates": [],
+  "unknown": [],
+  "rejected": [],
+  "badSlices": [],
+  "blockers": [
+    "No source image archive was available, so no duplicate, unknown, rejected, or bad-slice files could be populated."
+  ]
+}

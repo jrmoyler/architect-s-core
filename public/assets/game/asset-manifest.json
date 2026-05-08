@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-05-08T06:07:03.394Z",
+  "source": "Asset ZIP was not available in the workspace during this pass.",
+  "assets": [],
+  "counts": {
+    "rawImagesFound": 0,
+    "classified": 0,
+    "selectedActive": 0,
+    "spriteSheetsDetected": 0,
+    "spriteSheetsSliced": 0,
+    "slicedAssetsGenerated": 0
+  },
+  "blockers": [
+    "No ZIP file or source image files were present in the configured import paths."
+  ]
+}
