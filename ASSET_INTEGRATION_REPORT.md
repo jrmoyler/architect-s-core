@@ -108,6 +108,12 @@ Files modified:
 - `src/components/game/PartyScreen.tsx`
 - `src/components/game/CodexScreen.tsx`
 - `src/data/characters.ts`
+- `src/components/ui/command.tsx`
+- `src/components/ui/textarea.tsx`
+- `src/lib/audioManager.ts`
+- `src/lib/combat.ts`
+- `src/lib/saveSystem.ts`
+- `tailwind.config.ts`
 
 Integration details:
 
@@ -147,9 +153,10 @@ Then manually review:
 
 - Install result: `npm install --save-dev sharp` completed; `npm audit` reports existing dependency vulnerabilities from the installed tree.
 - Asset processor result: passed, but wrote empty manifests because no images were present.
-- Lint result: pending.
-- Typecheck result: pending.
-- Build result: pending.
+- Lint result: `npm run lint` passed with 0 errors and 9 warnings from existing Fast Refresh / hook dependency patterns.
+- Typecheck result: `npx tsc -b` passed.
+- Test result: `npm test` passed, 1 test file / 1 test.
+- Build result: `npm run build` passed. Vite reported a stale Browserslist data notice and an existing dynamic/static import chunking warning for `saveSystem.ts`.
 - Known remaining issue: real visual QA and sprite slicing cannot be completed until the asset ZIP is available.
 
 ## 9. Highest-Priority Next Step
