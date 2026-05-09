@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGame } from "@/store/GameStore";
 import { Button } from "@/components/ui/button";
 import { PixelSprite } from "./PixelSprite";
@@ -9,12 +9,41 @@ import { ITEM_BY_ID } from "@/data/items";
 import { cn } from "@/lib/utils";
 import { ASSET_BY_ID } from "@/lib/assets";
 import { DEFAULT_BATTLE_BG_PATH } from "@/data/envAssets";
+import type { AnimState } from "@/data/characterAssets";
+
+// Duration (ms) each animation frame is shown before resetting to idle
+const ANIM_DURATION = 500;
 
 export function BattleScreen() {
   const { state, performAbility, setScreen } = useGame();
   const battle = state.battle;
   const [targetingFor, setTargetingFor] = useState<string | null>(null);
   const [showItems, setShowItems] = useState(false);
+
+  // ── Animation state: maps refId → AnimState ────────────────────────────────
+  const [animStates, setAnimStates] = useState<Record<string, AnimState>>({});
+  const animTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+  const setAnim = useCallback((refId: string, state: AnimState) => {
+    // Clear any pending reset for this combatant
+    if (animTimers.current[refId]) clearTimeout(animTimers.current[refId]);
+    setAnimStates(prev => ({ ...prev, [refId]: state }));
+    // Auto-reset to idle after ANIM_DURATION
+    animTimers.current[refId] = setTimeout(() => {
+      setAnimStates(prev => {
+        const next = { ...prev };
+        delete next[refId];
+        return next;
+      });
+    }, ANIM_DURATION);
+  }, []);
+
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(animTimers.current).forEach(clearTimeout);
+    };
+  }, []);
 
   if (!battle) return null;
 
@@ -33,17 +62,27 @@ export function BattleScreen() {
     if (ab.kind === "attack" || ab.kind === "debuff") {
       setTargetingFor(abilityId);
     } else {
+      // Animate caster
+      const animKey: AnimState = ab.kind === "heal" ? "cast" : "slash";
+      if (currentRefId) setAnim(currentRefId, animKey);
       performAbility(abilityId);
     }
   };
 
   const onTargetEnemy = (refId: string) => {
     if (!targetingFor) return;
+    const ab = activeChar?.abilities.find(a => a.id === targetingFor);
+    const isCrit = ab?.kind === "attack";
+    // Animate attacker (slash or critical)
+    if (currentRefId) setAnim(currentRefId, isCrit ? "slash" : "cast");
+    // Animate target (hurt)
+    setAnim(refId, "hurt");
     performAbility(targetingFor, refId);
     setTargetingFor(null);
   };
 
   const onUseItem = (itemId: string) => {
+    if (currentRefId) setAnim(currentRefId, "cast");
     performAbility("use-item", undefined, itemId);
     setShowItems(false);
   };
@@ -82,6 +121,7 @@ export function BattleScreen() {
               const data = ENEMIES[en.refId.split("#")[0]];
               const isCurrent = en.refId === currentRefId;
               const targetable = !!targetingFor && !en.isDown;
+              const enemyAnim = animStates[en.refId] ?? "idle";
               return (
                 <button
                   key={en.refId}
@@ -92,9 +132,15 @@ export function BattleScreen() {
                     en.isDown && "opacity-30 grayscale",
                     isCurrent && "ring-2 ring-destructive",
                     targetable && "ring-2 ring-cyan ring-offset-2 ring-offset-background animate-pulse cursor-crosshair",
+                    enemyAnim === "hurt" && "animate-bounce",
                   )}
                 >
-                  <PixelSprite spriteKey={data.spriteKey} size={data.isBoss ? 96 : 72} className={cn(data.isBoss ? "w-24 h-24" : "w-18 h-18", "float-slow")} />
+                  <PixelSprite
+                    spriteKey={data.spriteKey}
+                    size={data.isBoss ? 96 : 72}
+                    className={cn(data.isBoss ? "w-24 h-24" : "w-18 h-18", "float-slow")}
+                    animState={enemyAnim}
+                  />
                   <div className="w-32">
                     <div className="flex justify-between text-[10px]"><span>{data.name}</span><span>{en.hp}/{en.maxHp}</span></div>
                     <div className="h-1.5 rounded bg-muted overflow-hidden"><div className="h-full bg-destructive" style={{ width: `${(en.hp / en.maxHp) * 100}%` }} /></div>
@@ -115,13 +161,21 @@ export function BattleScreen() {
             {battle.party.map(pc => {
               const ch = state.party.find(c => c.id === pc.refId)!;
               const isCurrent = pc.refId === currentRefId;
+              const charAnim = animStates[pc.refId] ?? "idle";
               return (
                 <div key={pc.refId} className={cn(
-                  "flex flex-col items-center gap-2 p-2 rounded",
+                  "flex flex-col items-center gap-2 p-2 rounded transition-all",
                   pc.isDown && "opacity-30 grayscale",
                   isCurrent && "ring-2 ring-gold panel-glow",
+                  charAnim === "hurt" && "animate-bounce",
+                  charAnim === "slash" && "animate-pulse",
                 )}>
-                  <PixelSprite spriteKey={ch.spriteKey} size={64} className="w-16 h-16" />
+                  <PixelSprite
+                    spriteKey={ch.spriteKey}
+                    size={64}
+                    className="w-16 h-16"
+                    animState={charAnim}
+                  />
                   <div className="w-36">
                     <div className="flex justify-between text-[11px]"><span className="font-display">{ch.name}</span><span>Lv {ch.level}</span></div>
                     <div className="text-[10px] flex justify-between"><span>HP</span><span>{pc.hp}/{pc.maxHp}</span></div>
