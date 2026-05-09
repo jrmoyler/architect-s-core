@@ -163,10 +163,24 @@ export const DIVISION_ASSETS: Record<string, DivisionAssetEntry> = {
   },
 };
 
+import { withAssetVersion } from "@/lib/assetVersion";
+
+const stripPublic = (p: string | null): string | null =>
+  !p ? null : p.startsWith("/public/") ? p.slice(7) : p;
+
+const resolve = (p: string | null) => withAssetVersion(stripPublic(p));
+
 export const getDivisionAsset = (slug: string): DivisionAssetEntry | null =>
   DIVISION_ASSETS[slug] ?? null;
 
-export const getDivisionBackground = (divisionId: string): string | null => {
+export const getDivisionBackground = (divisionId: string): string => {
   const entry = DIVISION_ASSETS[divisionId];
   return entry?.battleBackground ?? "/assets/game/environments/battle-backgrounds/06d26d78-b6d9-4f97-98eb-eb0580d2c80c.png";
+  return (
+    resolve(entry?.battleBackground ?? null) ??
+    withAssetVersion("/assets/game/environments/battle-backgrounds/06d26d78-b6d9-4f97-98eb-eb0580d2c80c.png")!
+  );
 };
+
+export const getDivisionMap = (divisionId: string): string | null =>
+  resolve(DIVISION_ASSETS[divisionId]?.map ?? DIVISION_ASSETS[divisionId]?.background ?? null);

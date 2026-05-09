@@ -189,6 +189,9 @@ export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
 export const getCharacterAsset = (slug: string): CharacterAssetEntry | null =>
   CHARACTER_ASSETS[slug] ?? null;
 
+const stripPublic = (p: string | null): string | null =>
+  !p ? null : p.startsWith("/public/") ? p.slice(7) : p;
+
 export const getCharacterSpritePath = (spriteKey: string): string | null => {
   const slugMap: Record<string, string> = {
     "sprite-hataalii": "hataalii",
@@ -203,7 +206,25 @@ export const getCharacterSpritePath = (spriteKey: string): string | null => {
     "sprite-ascended": "ascended",
   };
   const slug = slugMap[spriteKey];
-  return slug ? (CHARACTER_ASSETS[slug]?.sprite ?? null) : null;
+  if (!slug) return null;
+  const entry = CHARACTER_ASSETS[slug];
+  return stripPublic(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
+};
+
+export const getCharacterPortraitPath = (spriteKey: string): string | null => {
+  const slugMap: Record<string, string> = {
+    "portrait-hataalii": "hataalii",
+    "portrait-devon": "devon",
+    "portrait-ahmed": "ahmed",
+    "portrait-joseph": "joseph",
+    "portrait-kenza": "kenza",
+    "portrait-denzel": "denzel",
+    "portrait-arthur": "arthur",
+    "portrait-stanley": "stanley",
+  };
+  const slug = slugMap[spriteKey] ?? spriteKey.replace(/^portrait-/, "");
+  const entry = CHARACTER_ASSETS[slug];
+  return stripPublic(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
 };
 
 /** Resolve a specific animation frame path, falling back to idle then battleSprite */

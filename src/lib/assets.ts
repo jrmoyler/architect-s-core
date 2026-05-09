@@ -1,5 +1,20 @@
 import type { AssetManifestEntry } from "@/types/game";
 import { getCharacterSpritePath } from "@/data/characterAssets";
+import { withAssetVersion } from "@/lib/assetVersion";
+
+export { ASSET_VERSION, withAssetVersion } from "@/lib/assetVersion";
+
+/** Vite serves `public/` at the site root, so any path stored as `/public/...`
+ *  must be normalized to `/...` or it 404s. Also appends `?v=<ASSET_VERSION>`
+ *  so swapped assets update immediately on the next reload. */
+export const normalizeAssetPath = (p?: string | null): string | null => {
+  if (!p) return null;
+  let out = p.trim();
+  if (out.startsWith("/public/")) out = out.slice(7);
+  else if (out.startsWith("public/")) out = "/" + out.slice(7);
+  if (!out.startsWith("/") && !/^https?:\/\//i.test(out) && !out.startsWith("data:")) out = "/" + out;
+  return withAssetVersion(out);
+};
 
 /**
  * Asset manifest. Entries with a publicPath render as <img> or CSS background-image.
@@ -251,8 +266,9 @@ export const ASSET_BY_ID: Record<string, AssetManifestEntry> =
 export const computeSpriteStyle = (entry?: AssetManifestEntry): React.CSSProperties => {
   if (!entry?.sourceSheet || entry.row == null || entry.col == null || !entry.frameWidth) return {};
   const fw = entry.frameWidth, fh = entry.frameHeight ?? fw;
+  const sheetUrl = normalizeAssetPath(entry.sourceSheet);
   return {
-    backgroundImage: `url(${entry.sourceSheet})`,
+    backgroundImage: `url(${sheetUrl})`,
     backgroundPosition: `-${entry.col * fw}px -${entry.row * fh}px`,
     width: fw, height: fh,
     imageRendering: "pixelated",
@@ -266,12 +282,10 @@ export const resolveSprite = (id: string): { entry?: AssetManifestEntry; fallbac
 
 // Map spriteKey → real image path (for direct <img> rendering)
 export const resolveSpritePath = (spriteKey: string): string | null => {
-  // Try character assets first
   const charPath = getCharacterSpritePath(spriteKey);
-  if (charPath) return charPath;
-  // Fall back to ASSET_MANIFEST publicPath
+  if (charPath) return normalizeAssetPath(charPath);
   const entry = ASSET_BY_ID[spriteKey];
-  return entry?.publicPath ?? null;
+  return normalizeAssetPath(entry?.publicPath ?? null);
 };
 
 export const sheetCoords = (row: number, col: number, frame = 32) => ({
