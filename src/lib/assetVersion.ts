@@ -5,7 +5,7 @@
 const ENV_VERSION =
   (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_ASSET_VERSION) || "";
 
-export const ASSET_VERSION: string = ENV_VERSION || "2026-05-09a";
+export const ASSET_VERSION: string = ENV_VERSION || "2026-05-09b";
 
 /** Append `?v=<ASSET_VERSION>` to any same-origin asset URL.
  *  - Skips data: / blob: / external URLs
@@ -13,6 +13,7 @@ export const ASSET_VERSION: string = ENV_VERSION || "2026-05-09a";
 export const withAssetVersion = (url?: string | null): string | null => {
   if (!url) return null;
   if (/^(data:|blob:|https?:\/\/)/i.test(url)) return url;
+  if (/[?&]v=/.test(url)) return url;
   const sep = url.includes("?") ? "&" : "?";
   return `${url}${sep}v=${encodeURIComponent(ASSET_VERSION)}`;
 };

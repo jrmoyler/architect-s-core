@@ -1,5 +1,8 @@
-// Character asset registry — paths are relative to Next.js public/ root
-// Next.js serves public/ at /, so paths start with /assets/ (NOT /public/assets/)
+import { withAssetVersion } from "@/lib/assetVersion";
+
+// Character asset registry — paths are relative to Vite's public/ root.
+// Vite serves public/ at /, so paths start with /assets/ (NOT /public/assets/).
+// Battle sprites use curated standalone crops instead of raw sheet cells.
 
 export type AnimState =
   | "idle"
@@ -33,21 +36,21 @@ export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
     name: "Hataalii the Architect",
     slug: "hataalii",
-    sprite:       "/assets/game/characters/sprites/hataalii/idle.png",
+    sprite:       "/assets/game/characters/standalone/hataalii/idle.png",
     portrait:     "/assets/game/characters/turnarounds/1776824582721.png",
     turnaround:   "/assets/game/characters/turnarounds/1776824582721.png",
-    battleSprite: "/assets/game/characters/sprites/hataalii/idle.png",
+    battleSprite: "/assets/game/characters/standalone/hataalii/idle.png",
     frames: {
-      idle:         "/assets/game/characters/sprites/hataalii/idle.png",
-      walk:         "/assets/game/characters/sprites/hataalii/walk.png",
-      slash:        "/assets/game/characters/sprites/hataalii/slash.png",
-      slash_heavy:  "/assets/game/characters/sprites/hataalii/slash_heavy.png",
-      cast:         "/assets/game/characters/sprites/hataalii/cast.png",
-      hurt:         "/assets/game/characters/sprites/hataalii/hurt.png",
-      knockback:    "/assets/game/characters/sprites/hataalii/knockback.png",
-      victory:      "/assets/game/characters/sprites/hataalii/victory.png",
-      defeat:       "/assets/game/characters/sprites/hataalii/defeat.png",
-      critical_hit: "/assets/game/characters/sprites/hataalii/critical_hit.png",
+      idle:         "/assets/game/characters/standalone/hataalii/idle.png",
+      walk:         "/assets/game/characters/standalone/hataalii/walk.png",
+      slash:        "/assets/game/characters/standalone/hataalii/slash.png",
+      slash_heavy:  "/assets/game/characters/standalone/hataalii/slash_heavy.png",
+      cast:         "/assets/game/characters/standalone/hataalii/cast.png",
+      hurt:         "/assets/game/characters/standalone/hataalii/hurt.png",
+      knockback:    "/assets/game/characters/standalone/hataalii/knockback.png",
+      victory:      "/assets/game/characters/standalone/hataalii/victory.png",
+      defeat:       "/assets/game/characters/standalone/hataalii/defeat.png",
+      critical_hit: "/assets/game/characters/standalone/hataalii/critical_hit.png",
     },
     confidence: 95,
     notes: "Mage in gold/black robes with staff. 10×10 sheet sliced — all 10 animation rows confirmed.",
@@ -55,21 +58,21 @@ export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   devon: {
     name: "Devon Scout",
     slug: "devon",
-    sprite:       "/assets/game/characters/sprites/devon/idle.png",
+    sprite:       "/assets/game/characters/standalone/devon/idle.png",
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/devon/idle.png",
+    battleSprite: "/assets/game/characters/standalone/devon/idle.png",
     frames: {
-      idle:         "/assets/game/characters/sprites/devon/idle.png",
-      walk:         "/assets/game/characters/sprites/devon/walk.png",
-      slash:        "/assets/game/characters/sprites/devon/slash.png",
-      slash_heavy:  "/assets/game/characters/sprites/devon/slash_heavy.png",
-      cast:         "/assets/game/characters/sprites/devon/cast.png",
-      hurt:         "/assets/game/characters/sprites/devon/hurt.png",
-      knockback:    "/assets/game/characters/sprites/devon/knockback.png",
-      victory:      "/assets/game/characters/sprites/devon/victory.png",
-      defeat:       "/assets/game/characters/sprites/devon/defeat.png",
-      critical_hit: "/assets/game/characters/sprites/devon/critical_hit.png",
+      idle:         "/assets/game/characters/standalone/devon/idle.png",
+      walk:         "/assets/game/characters/standalone/devon/walk.png",
+      slash:        "/assets/game/characters/standalone/devon/slash.png",
+      slash_heavy:  "/assets/game/characters/standalone/devon/slash_heavy.png",
+      cast:         "/assets/game/characters/standalone/devon/cast.png",
+      hurt:         "/assets/game/characters/standalone/devon/hurt.png",
+      knockback:    "/assets/game/characters/standalone/devon/knockback.png",
+      victory:      "/assets/game/characters/standalone/devon/victory.png",
+      defeat:       "/assets/game/characters/standalone/devon/defeat.png",
+      critical_hit: "/assets/game/characters/standalone/devon/critical_hit.png",
     },
     confidence: 95,
     notes: "Tactical athlete in cyan gear. IDLE STANCE, SLASH, DODGE ROLL confirmed. 10×10 sheet sliced.",
@@ -77,21 +80,21 @@ export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   ahmed: {
     name: "Ahmed the Strategist",
     slug: "ahmed",
-    sprite:       "/assets/game/characters/sprites/ahmed/idle.png",
+    sprite:       "/assets/game/characters/standalone/ahmed/idle.png",
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/ahmed/idle.png",
+    battleSprite: "/assets/game/characters/standalone/ahmed/idle.png",
     frames: {
-      idle:         "/assets/game/characters/sprites/ahmed/idle.png",
-      walk:         "/assets/game/characters/sprites/ahmed/walk.png",
-      slash:        "/assets/game/characters/sprites/ahmed/slash.png",
-      slash_heavy:  "/assets/game/characters/sprites/ahmed/slash_heavy.png",
-      cast:         "/assets/game/characters/sprites/ahmed/cast.png",
-      hurt:         "/assets/game/characters/sprites/ahmed/hurt.png",
-      knockback:    "/assets/game/characters/sprites/ahmed/knockback.png",
-      victory:      "/assets/game/characters/sprites/ahmed/victory.png",
-      defeat:       "/assets/game/characters/sprites/ahmed/defeat.png",
-      critical_hit: "/assets/game/characters/sprites/ahmed/critical_hit.png",
+      idle:         "/assets/game/characters/standalone/ahmed/idle.png",
+      walk:         "/assets/game/characters/standalone/ahmed/walk.png",
+      slash:        "/assets/game/characters/standalone/ahmed/slash.png",
+      slash_heavy:  "/assets/game/characters/standalone/ahmed/slash_heavy.png",
+      cast:         "/assets/game/characters/standalone/ahmed/cast.png",
+      hurt:         "/assets/game/characters/standalone/ahmed/hurt.png",
+      knockback:    "/assets/game/characters/standalone/ahmed/knockback.png",
+      victory:      "/assets/game/characters/standalone/ahmed/victory.png",
+      defeat:       "/assets/game/characters/standalone/ahmed/defeat.png",
+      critical_hit: "/assets/game/characters/standalone/ahmed/critical_hit.png",
     },
     confidence: 90,
     notes: "Blue suit character. 1024×1024 sheet (102×102 cells). OPEN LEDGER SPELL CAST, COIN SHOWER confirmed.",
@@ -99,21 +102,21 @@ export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   kenza: {
     name: "Kenza the Orchestrator",
     slug: "kenza",
-    sprite:       "/assets/game/characters/sprites/kenza/idle.png",
+    sprite:       "/assets/game/characters/standalone/kenza/idle.png",
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/kenza/idle.png",
+    battleSprite: "/assets/game/characters/standalone/kenza/idle.png",
     frames: {
-      idle:         "/assets/game/characters/sprites/kenza/idle.png",
-      walk:         "/assets/game/characters/sprites/kenza/walk.png",
-      slash:        "/assets/game/characters/sprites/kenza/slash.png",
-      slash_heavy:  "/assets/game/characters/sprites/kenza/slash_heavy.png",
-      cast:         "/assets/game/characters/sprites/kenza/cast.png",
-      hurt:         "/assets/game/characters/sprites/kenza/hurt.png",
-      knockback:    "/assets/game/characters/sprites/kenza/knockback.png",
-      victory:      "/assets/game/characters/sprites/kenza/victory.png",
-      defeat:       "/assets/game/characters/sprites/kenza/defeat.png",
-      critical_hit: "/assets/game/characters/sprites/kenza/critical_hit.png",
+      idle:         "/assets/game/characters/standalone/kenza/idle.png",
+      walk:         "/assets/game/characters/standalone/kenza/walk.png",
+      slash:        "/assets/game/characters/standalone/kenza/slash.png",
+      slash_heavy:  "/assets/game/characters/standalone/kenza/slash_heavy.png",
+      cast:         "/assets/game/characters/standalone/kenza/cast.png",
+      hurt:         "/assets/game/characters/standalone/kenza/hurt.png",
+      knockback:    "/assets/game/characters/standalone/kenza/knockback.png",
+      victory:      "/assets/game/characters/standalone/kenza/victory.png",
+      defeat:       "/assets/game/characters/standalone/kenza/defeat.png",
+      critical_hit: "/assets/game/characters/standalone/kenza/critical_hit.png",
     },
     confidence: 80,
     notes: "Female in yellow blazer. BUFF SUMMON, COMMAND POINT, CELEBRATE VICTORY confirmed. 10×10 sheet sliced.",
@@ -192,6 +195,9 @@ export const getCharacterAsset = (slug: string): CharacterAssetEntry | null =>
 const stripPublic = (p: string | null): string | null =>
   !p ? null : p.startsWith("/public/") ? p.slice(7) : p;
 
+const versionCharacterPath = (p: string | null): string | null =>
+  withAssetVersion(stripPublic(p));
+
 export const getCharacterSpritePath = (spriteKey: string): string | null => {
   const slugMap: Record<string, string> = {
     "sprite-hataalii": "hataalii",
@@ -208,7 +214,7 @@ export const getCharacterSpritePath = (spriteKey: string): string | null => {
   const slug = slugMap[spriteKey];
   if (!slug) return null;
   const entry = CHARACTER_ASSETS[slug];
-  return stripPublic(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
+  return versionCharacterPath(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
 };
 
 export const getCharacterPortraitPath = (spriteKey: string): string | null => {
@@ -224,7 +230,7 @@ export const getCharacterPortraitPath = (spriteKey: string): string | null => {
   };
   const slug = slugMap[spriteKey] ?? spriteKey.replace(/^portrait-/, "");
   const entry = CHARACTER_ASSETS[slug];
-  return stripPublic(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
+  return versionCharacterPath(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
 };
 
 /** Resolve a specific animation frame path, falling back to idle then battleSprite */
@@ -247,6 +253,6 @@ export const getCharacterFrame = (
   const slug = slugMap[spriteKey];
   if (!slug) return null;
   const entry = CHARACTER_ASSETS[slug];
-  if (!entry?.frames) return entry?.battleSprite ?? entry?.sprite ?? null;
-  return entry.frames[animState] ?? entry.frames.idle ?? null;
+  if (!entry?.frames) return versionCharacterPath(entry?.battleSprite ?? entry?.sprite ?? null);
+  return versionCharacterPath(entry.frames[animState] ?? entry.frames.idle ?? null);
 };
