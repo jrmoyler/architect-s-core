@@ -1,15 +1,19 @@
 import type { AssetManifestEntry } from "@/types/game";
 import { getCharacterSpritePath } from "@/data/characterAssets";
+import { withAssetVersion } from "@/lib/assetVersion";
+
+export { ASSET_VERSION, withAssetVersion } from "@/lib/assetVersion";
 
 /** Vite serves `public/` at the site root, so any path stored as `/public/...`
- *  must be normalized to `/...` or it 404s. Hard-embeds asset URLs reliably. */
+ *  must be normalized to `/...` or it 404s. Also appends `?v=<ASSET_VERSION>`
+ *  so swapped assets update immediately on the next reload. */
 export const normalizeAssetPath = (p?: string | null): string | null => {
   if (!p) return null;
   let out = p.trim();
   if (out.startsWith("/public/")) out = out.slice(7);
   else if (out.startsWith("public/")) out = "/" + out.slice(7);
-  if (!out.startsWith("/") && !out.startsWith("http")) out = "/" + out;
-  return out;
+  if (!out.startsWith("/") && !/^https?:\/\//i.test(out) && !out.startsWith("data:")) out = "/" + out;
+  return withAssetVersion(out);
 };
 
 /**
