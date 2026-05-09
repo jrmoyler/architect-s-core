@@ -262,8 +262,9 @@ export const ASSET_BY_ID: Record<string, AssetManifestEntry> =
 export const computeSpriteStyle = (entry?: AssetManifestEntry): React.CSSProperties => {
   if (!entry?.sourceSheet || entry.row == null || entry.col == null || !entry.frameWidth) return {};
   const fw = entry.frameWidth, fh = entry.frameHeight ?? fw;
+  const sheetUrl = normalizeAssetPath(entry.sourceSheet);
   return {
-    backgroundImage: `url(${entry.sourceSheet})`,
+    backgroundImage: `url(${sheetUrl})`,
     backgroundPosition: `-${entry.col * fw}px -${entry.row * fh}px`,
     width: fw, height: fh,
     imageRendering: "pixelated",
