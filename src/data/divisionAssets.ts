@@ -175,7 +175,6 @@ export const getDivisionAsset = (slug: string): DivisionAssetEntry | null =>
 
 export const getDivisionBackground = (divisionId: string): string => {
   const entry = DIVISION_ASSETS[divisionId];
-  return entry?.battleBackground ?? "/assets/game/environments/battle-backgrounds/06d26d78-b6d9-4f97-98eb-eb0580d2c80c.png";
   return (
     resolve(entry?.battleBackground ?? null) ??
     withAssetVersion("/assets/game/environments/battle-backgrounds/06d26d78-b6d9-4f97-98eb-eb0580d2c80c.png")!
