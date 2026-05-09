@@ -195,6 +195,9 @@ export const getCharacterAsset = (slug: string): CharacterAssetEntry | null =>
 const stripPublic = (p: string | null): string | null =>
   !p ? null : p.startsWith("/public/") ? p.slice(7) : p;
 
+const versionCharacterPath = (p: string | null): string | null =>
+  withAssetVersion(stripPublic(p));
+
 export const getCharacterSpritePath = (spriteKey: string): string | null => {
   const slugMap: Record<string, string> = {
     "sprite-hataalii": "hataalii",
@@ -211,7 +214,7 @@ export const getCharacterSpritePath = (spriteKey: string): string | null => {
   const slug = slugMap[spriteKey];
   if (!slug) return null;
   const entry = CHARACTER_ASSETS[slug];
-  return stripPublic(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
+  return versionCharacterPath(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
 };
 
 export const getCharacterPortraitPath = (spriteKey: string): string | null => {
@@ -227,7 +230,7 @@ export const getCharacterPortraitPath = (spriteKey: string): string | null => {
   };
   const slug = slugMap[spriteKey] ?? spriteKey.replace(/^portrait-/, "");
   const entry = CHARACTER_ASSETS[slug];
-  return stripPublic(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
+  return versionCharacterPath(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
 };
 
 /** Resolve a specific animation frame path, falling back to idle then battleSprite */
@@ -250,6 +253,6 @@ export const getCharacterFrame = (
   const slug = slugMap[spriteKey];
   if (!slug) return null;
   const entry = CHARACTER_ASSETS[slug];
-  if (!entry?.frames) return entry?.battleSprite ?? entry?.sprite ?? null;
-  return entry.frames[animState] ?? entry.frames.idle ?? null;
+  if (!entry?.frames) return versionCharacterPath(entry?.battleSprite ?? entry?.sprite ?? null);
+  return versionCharacterPath(entry.frames[animState] ?? entry.frames.idle ?? null);
 };
