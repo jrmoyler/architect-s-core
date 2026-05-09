@@ -1,5 +1,8 @@
-// Character asset registry — paths are relative to Next.js public/ root
-// Next.js serves public/ at /, so paths start with /assets/ (NOT /public/assets/)
+import { withAssetVersion } from "@/lib/assetVersion";
+
+// Character asset registry — paths are relative to Vite's public/ root.
+// Vite serves public/ at /, so paths start with /assets/ (NOT /public/assets/).
+// Battle sprites use curated standalone crops instead of raw sheet cells.
 
 export type AnimState =
   | "idle"
@@ -33,21 +36,21 @@ export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
     name: "Hataalii the Architect",
     slug: "hataalii",
-    sprite:       "/assets/game/characters/sprites/hataalii/idle.png",
+    sprite:       "/assets/game/characters/standalone/hataalii/idle.png",
     portrait:     "/assets/game/characters/turnarounds/1776824582721.png",
     turnaround:   "/assets/game/characters/turnarounds/1776824582721.png",
-    battleSprite: "/assets/game/characters/sprites/hataalii/idle.png",
+    battleSprite: "/assets/game/characters/standalone/hataalii/idle.png",
     frames: {
-      idle:         "/assets/game/characters/sprites/hataalii/idle.png",
-      walk:         "/assets/game/characters/sprites/hataalii/walk.png",
-      slash:        "/assets/game/characters/sprites/hataalii/slash.png",
-      slash_heavy:  "/assets/game/characters/sprites/hataalii/slash_heavy.png",
-      cast:         "/assets/game/characters/sprites/hataalii/cast.png",
-      hurt:         "/assets/game/characters/sprites/hataalii/hurt.png",
-      knockback:    "/assets/game/characters/sprites/hataalii/knockback.png",
-      victory:      "/assets/game/characters/sprites/hataalii/victory.png",
-      defeat:       "/assets/game/characters/sprites/hataalii/defeat.png",
-      critical_hit: "/assets/game/characters/sprites/hataalii/critical_hit.png",
+      idle:         "/assets/game/characters/standalone/hataalii/idle.png",
+      walk:         "/assets/game/characters/standalone/hataalii/walk.png",
+      slash:        "/assets/game/characters/standalone/hataalii/slash.png",
+      slash_heavy:  "/assets/game/characters/standalone/hataalii/slash_heavy.png",
+      cast:         "/assets/game/characters/standalone/hataalii/cast.png",
+      hurt:         "/assets/game/characters/standalone/hataalii/hurt.png",
+      knockback:    "/assets/game/characters/standalone/hataalii/knockback.png",
+      victory:      "/assets/game/characters/standalone/hataalii/victory.png",
+      defeat:       "/assets/game/characters/standalone/hataalii/defeat.png",
+      critical_hit: "/assets/game/characters/standalone/hataalii/critical_hit.png",
     },
     confidence: 95,
     notes: "Mage in gold/black robes with staff. 10×10 sheet sliced — all 10 animation rows confirmed.",
