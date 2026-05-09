@@ -1,6 +1,17 @@
 import type { AssetManifestEntry } from "@/types/game";
 import { getCharacterSpritePath } from "@/data/characterAssets";
 
+/** Vite serves `public/` at the site root, so any path stored as `/public/...`
+ *  must be normalized to `/...` or it 404s. Hard-embeds asset URLs reliably. */
+export const normalizeAssetPath = (p?: string | null): string | null => {
+  if (!p) return null;
+  let out = p.trim();
+  if (out.startsWith("/public/")) out = out.slice(7);
+  else if (out.startsWith("public/")) out = "/" + out.slice(7);
+  if (!out.startsWith("/") && !out.startsWith("http")) out = "/" + out;
+  return out;
+};
+
 /**
  * Asset manifest. Entries with a publicPath render as <img> or CSS background-image.
  * Entries with sourceSheet+row+col use sprite-sheet clipping.
@@ -266,12 +277,10 @@ export const resolveSprite = (id: string): { entry?: AssetManifestEntry; fallbac
 
 // Map spriteKey → real image path (for direct <img> rendering)
 export const resolveSpritePath = (spriteKey: string): string | null => {
-  // Try character assets first
   const charPath = getCharacterSpritePath(spriteKey);
-  if (charPath) return charPath;
-  // Fall back to ASSET_MANIFEST publicPath
+  if (charPath) return normalizeAssetPath(charPath);
   const entry = ASSET_BY_ID[spriteKey];
-  return entry?.publicPath ?? null;
+  return normalizeAssetPath(entry?.publicPath ?? null);
 };
 
 export const sheetCoords = (row: number, col: number, frame = 32) => ({
