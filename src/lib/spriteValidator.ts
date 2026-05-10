@@ -204,9 +204,11 @@ export const validateAllSprites = async (
   for (const [slug, c] of Object.entries(CHARACTER_ASSETS)) {
     if (!c.frames) continue;
     for (const state of ANIM_STATES) {
-      const path = c.frames[state];
-      if (!path) continue;
-      tasks.push(checkOne(`${slug}/${state}`, "character-frame", path, opts));
+      const paths = c.frames[state];
+      if (!paths || paths.length === 0) continue;
+      paths.forEach((p, i) =>
+        tasks.push(checkOne(`${slug}/${state}#${i + 1}`, "character-frame", p, opts)),
+      );
     }
   }
 
