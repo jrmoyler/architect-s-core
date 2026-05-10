@@ -2,7 +2,8 @@ import { withAssetVersion } from "@/lib/assetVersion";
 
 // Character asset registry — paths are relative to Vite's public/ root.
 // Vite serves public/ at /, so paths start with /assets/ (NOT /public/assets/).
-// Battle sprites use curated standalone crops instead of raw sheet cells.
+// Multi-frame animations use the /sprites/ sub-directories; each state has
+// {state}.png (frame 1) plus {state}-f02.png … {state}-f10.png (frames 2–10).
 
 export type AnimState =
   | "idle"
@@ -16,8 +17,9 @@ export type AnimState =
   | "defeat"
   | "critical_hit";
 
-export interface CharacterFrames extends Partial<Record<AnimState, string>> {
-  idle: string; // idle is always required when frames map is present
+// Each animation state maps to an ordered array of frame paths (f01 … f10).
+export interface CharacterFrames extends Partial<Record<AnimState, string[]>> {
+  idle: string[]; // idle is always required when frames map is present
 }
 
 export interface CharacterAssetEntry {
@@ -27,167 +29,151 @@ export interface CharacterAssetEntry {
   portrait: string | null;        // portrait / turnaround art
   turnaround: string | null;      // turnaround sheet
   battleSprite: string | null;    // alias for sprite (backwards compat)
-  frames: CharacterFrames | null; // per-animation frame paths
+  frames: CharacterFrames | null; // per-animation multi-frame paths
   confidence: number;
   notes: string;
 }
+
+// ── Frame-array helpers ────────────────────────────────────────────────────
+
+/** Build a 10-frame array for one animation state from the /sprites/ dir. */
+const spriteFrames = (slug: string, state: AnimState): string[] => [
+  `/assets/game/characters/sprites/${slug}/${state}.png`,
+  ...Array.from({ length: 9 }, (_, i) =>
+    `/assets/game/characters/sprites/${slug}/${state}-f${String(i + 2).padStart(2, "0")}.png`
+  ),
+];
+
+/** Build the full 10-state × 10-frame map for a character slug. */
+const allFrames = (slug: string): CharacterFrames => ({
+  idle:         spriteFrames(slug, "idle"),
+  walk:         spriteFrames(slug, "walk"),
+  slash:        spriteFrames(slug, "slash"),
+  slash_heavy:  spriteFrames(slug, "slash_heavy"),
+  cast:         spriteFrames(slug, "cast"),
+  hurt:         spriteFrames(slug, "hurt"),
+  knockback:    spriteFrames(slug, "knockback"),
+  victory:      spriteFrames(slug, "victory"),
+  defeat:       spriteFrames(slug, "defeat"),
+  critical_hit: spriteFrames(slug, "critical_hit"),
+});
+
+// ── Character registry ─────────────────────────────────────────────────────
 
 export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
     name: "Hataalii the Architect",
     slug: "hataalii",
-    sprite:       "/assets/game/characters/standalone/hataalii/idle.png",
+    sprite:       "/assets/game/characters/sprites/hataalii/idle.png",
     portrait:     "/assets/game/characters/turnarounds/1776824582721.png",
     turnaround:   "/assets/game/characters/turnarounds/1776824582721.png",
-    battleSprite: "/assets/game/characters/standalone/hataalii/idle.png",
-    frames: {
-      idle:         "/assets/game/characters/standalone/hataalii/idle.png",
-      walk:         "/assets/game/characters/standalone/hataalii/walk.png",
-      slash:        "/assets/game/characters/standalone/hataalii/slash.png",
-      slash_heavy:  "/assets/game/characters/standalone/hataalii/slash_heavy.png",
-      cast:         "/assets/game/characters/standalone/hataalii/cast.png",
-      hurt:         "/assets/game/characters/standalone/hataalii/hurt.png",
-      knockback:    "/assets/game/characters/standalone/hataalii/knockback.png",
-      victory:      "/assets/game/characters/standalone/hataalii/victory.png",
-      defeat:       "/assets/game/characters/standalone/hataalii/defeat.png",
-      critical_hit: "/assets/game/characters/standalone/hataalii/critical_hit.png",
-    },
+    battleSprite: "/assets/game/characters/sprites/hataalii/idle.png",
+    frames: allFrames("hataalii"),
     confidence: 95,
-    notes: "Mage in gold/black robes with staff. 10×10 sheet sliced — all 10 animation rows confirmed.",
+    notes: "Mage in gold/black robes with staff. 10 states × 10 frames confirmed.",
   },
   devon: {
     name: "Devon Scout",
     slug: "devon",
-    sprite:       "/assets/game/characters/standalone/devon/idle.png",
+    sprite:       "/assets/game/characters/sprites/devon/idle.png",
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/standalone/devon/idle.png",
-    frames: {
-      idle:         "/assets/game/characters/standalone/devon/idle.png",
-      walk:         "/assets/game/characters/standalone/devon/walk.png",
-      slash:        "/assets/game/characters/standalone/devon/slash.png",
-      slash_heavy:  "/assets/game/characters/standalone/devon/slash_heavy.png",
-      cast:         "/assets/game/characters/standalone/devon/cast.png",
-      hurt:         "/assets/game/characters/standalone/devon/hurt.png",
-      knockback:    "/assets/game/characters/standalone/devon/knockback.png",
-      victory:      "/assets/game/characters/standalone/devon/victory.png",
-      defeat:       "/assets/game/characters/standalone/devon/defeat.png",
-      critical_hit: "/assets/game/characters/standalone/devon/critical_hit.png",
-    },
+    battleSprite: "/assets/game/characters/sprites/devon/idle.png",
+    frames: allFrames("devon"),
     confidence: 95,
-    notes: "Tactical athlete in cyan gear. IDLE STANCE, SLASH, DODGE ROLL confirmed. 10×10 sheet sliced.",
+    notes: "Tactical athlete in cyan gear. 10 states × 10 frames confirmed.",
   },
   ahmed: {
     name: "Ahmed the Strategist",
     slug: "ahmed",
-    sprite:       "/assets/game/characters/standalone/ahmed/idle.png",
+    sprite:       "/assets/game/characters/sprites/ahmed/idle.png",
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/standalone/ahmed/idle.png",
-    frames: {
-      idle:         "/assets/game/characters/standalone/ahmed/idle.png",
-      walk:         "/assets/game/characters/standalone/ahmed/walk.png",
-      slash:        "/assets/game/characters/standalone/ahmed/slash.png",
-      slash_heavy:  "/assets/game/characters/standalone/ahmed/slash_heavy.png",
-      cast:         "/assets/game/characters/standalone/ahmed/cast.png",
-      hurt:         "/assets/game/characters/standalone/ahmed/hurt.png",
-      knockback:    "/assets/game/characters/standalone/ahmed/knockback.png",
-      victory:      "/assets/game/characters/standalone/ahmed/victory.png",
-      defeat:       "/assets/game/characters/standalone/ahmed/defeat.png",
-      critical_hit: "/assets/game/characters/standalone/ahmed/critical_hit.png",
-    },
+    battleSprite: "/assets/game/characters/sprites/ahmed/idle.png",
+    frames: allFrames("ahmed"),
     confidence: 90,
-    notes: "Blue suit character. 1024×1024 sheet (102×102 cells). OPEN LEDGER SPELL CAST, COIN SHOWER confirmed.",
+    notes: "Blue suit strategist. 10 states × 10 frames confirmed.",
   },
   kenza: {
     name: "Kenza the Orchestrator",
     slug: "kenza",
-    sprite:       "/assets/game/characters/standalone/kenza/idle.png",
+    sprite:       "/assets/game/characters/sprites/kenza/idle.png",
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/standalone/kenza/idle.png",
-    frames: {
-      idle:         "/assets/game/characters/standalone/kenza/idle.png",
-      walk:         "/assets/game/characters/standalone/kenza/walk.png",
-      slash:        "/assets/game/characters/standalone/kenza/slash.png",
-      slash_heavy:  "/assets/game/characters/standalone/kenza/slash_heavy.png",
-      cast:         "/assets/game/characters/standalone/kenza/cast.png",
-      hurt:         "/assets/game/characters/standalone/kenza/hurt.png",
-      knockback:    "/assets/game/characters/standalone/kenza/knockback.png",
-      victory:      "/assets/game/characters/standalone/kenza/victory.png",
-      defeat:       "/assets/game/characters/standalone/kenza/defeat.png",
-      critical_hit: "/assets/game/characters/standalone/kenza/critical_hit.png",
-    },
+    battleSprite: "/assets/game/characters/sprites/kenza/idle.png",
+    frames: allFrames("kenza"),
     confidence: 80,
-    notes: "Female in yellow blazer. BUFF SUMMON, COMMAND POINT, CELEBRATE VICTORY confirmed. 10×10 sheet sliced.",
+    notes: "Female in yellow blazer. 10 states × 10 frames confirmed.",
   },
   denzel: {
     name: "Denzel the Agent",
     slug: "denzel",
-    sprite:       null,
-    portrait:     null,
+    sprite:       "/assets/game/characters/placeholders/denzel.svg",
+    portrait:     "/assets/game/characters/placeholders/denzel.svg",
     turnaround:   null,
-    battleSprite: null,
+    battleSprite: "/assets/game/characters/placeholders/denzel.svg",
     frames:       null,
     confidence: 55,
-    notes: "Visible in multi-character turnaround sheet. No dedicated battle sprite found. TODO.",
+    notes: "SVG placeholder. Civic Core Speaker — support role.",
   },
   arthur: {
     name: "Arthur the Advisor",
     slug: "arthur",
-    sprite:       null,
-    portrait:     null,
+    sprite:       "/assets/game/characters/placeholders/arthur.svg",
+    portrait:     "/assets/game/characters/placeholders/arthur.svg",
     turnaround:   null,
-    battleSprite: null,
+    battleSprite: "/assets/game/characters/placeholders/arthur.svg",
     frames:       null,
     confidence: 55,
-    notes: "Visible in multi-character turnaround sheet. TODO: extract individual sprite.",
+    notes: "SVG placeholder. Obsidian Arc Sentinel — tank role.",
   },
   stanley: {
     name: "Stanley the Guardian",
     slug: "stanley",
-    sprite:       null,
-    portrait:     null,
+    sprite:       "/assets/game/characters/placeholders/stanley.svg",
+    portrait:     "/assets/game/characters/placeholders/stanley.svg",
     turnaround:   null,
-    battleSprite: null,
+    battleSprite: "/assets/game/characters/placeholders/stanley.svg",
     frames:       null,
     confidence: 85,
-    notes: "Blue/gold armored knight turnaround noted. Individual turnaround file not confirmed on disk. TODO.",
+    notes: "SVG placeholder. Nexus Labs Tinkerer — support role.",
   },
   joseph: {
     name: "Dr. Joseph the Healer",
     slug: "joseph",
-    sprite:       null,
-    portrait:     null,
+    sprite:       "/assets/game/characters/placeholders/joseph.svg",
+    portrait:     "/assets/game/characters/placeholders/joseph.svg",
     turnaround:   null,
-    battleSprite: null,
+    battleSprite: "/assets/game/characters/placeholders/joseph.svg",
     frames:       null,
     confidence: 55,
-    notes: "Visible in multi-character turnaround sheet. TODO.",
+    notes: "SVG placeholder. Vital Helix Medic — healer role.",
   },
   champion: {
     name: "Collective Champion",
     slug: "champion",
-    sprite:       null,
-    portrait:     null,
+    sprite:       "/assets/game/characters/placeholders/champion.svg",
+    portrait:     "/assets/game/characters/placeholders/champion.svg",
     turnaround:   null,
-    battleSprite: null,
+    battleSprite: "/assets/game/characters/placeholders/champion.svg",
     frames:       null,
     confidence: 55,
-    notes: "Visible in multi-character turnaround sheet. TODO.",
+    notes: "SVG placeholder. Collective Champion — elite role.",
   },
   ascended: {
     name: "The Architect Ascended",
     slug: "ascended",
-    sprite:       null,
-    portrait:     null,
+    sprite:       "/assets/game/characters/placeholders/ascended.svg",
+    portrait:     "/assets/game/characters/placeholders/ascended.svg",
     turnaround:   null,
-    battleSprite: null,
+    battleSprite: "/assets/game/characters/placeholders/ascended.svg",
     frames:       null,
     confidence: 55,
-    notes: "Council Sage form visible in multi-character sheet. TODO.",
+    notes: "SVG placeholder. The Architect Ascended / Council Sage form.",
   },
 };
+
+// ── Path helpers ───────────────────────────────────────────────────────────
 
 export const getCharacterAsset = (slug: string): CharacterAssetEntry | null =>
   CHARACTER_ASSETS[slug] ?? null;
@@ -195,64 +181,71 @@ export const getCharacterAsset = (slug: string): CharacterAssetEntry | null =>
 const stripPublic = (p: string | null): string | null =>
   !p ? null : p.startsWith("/public/") ? p.slice(7) : p;
 
-const versionCharacterPath = (p: string | null): string | null =>
+const versionPath = (p: string | null): string | null =>
   withAssetVersion(stripPublic(p));
 
+const SPRITE_SLUG: Record<string, string> = {
+  "sprite-hataalii": "hataalii",
+  "sprite-devon":    "devon",
+  "sprite-ahmed":    "ahmed",
+  "sprite-joseph":   "joseph",
+  "sprite-kenza":    "kenza",
+  "sprite-denzel":   "denzel",
+  "sprite-arthur":   "arthur",
+  "sprite-stanley":  "stanley",
+  "sprite-champion": "champion",
+  "sprite-ascended": "ascended",
+};
+
 export const getCharacterSpritePath = (spriteKey: string): string | null => {
-  const slugMap: Record<string, string> = {
-    "sprite-hataalii": "hataalii",
-    "sprite-devon":    "devon",
-    "sprite-ahmed":    "ahmed",
-    "sprite-joseph":   "joseph",
-    "sprite-kenza":    "kenza",
-    "sprite-denzel":   "denzel",
-    "sprite-arthur":   "arthur",
-    "sprite-stanley":  "stanley",
-    "sprite-champion": "champion",
-    "sprite-ascended": "ascended",
-  };
-  const slug = slugMap[spriteKey];
+  const slug = SPRITE_SLUG[spriteKey];
   if (!slug) return null;
   const entry = CHARACTER_ASSETS[slug];
-  return versionCharacterPath(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
+  return versionPath(entry?.sprite ?? entry?.battleSprite ?? entry?.turnaround ?? null);
 };
 
 export const getCharacterPortraitPath = (spriteKey: string): string | null => {
   const slugMap: Record<string, string> = {
     "portrait-hataalii": "hataalii",
-    "portrait-devon": "devon",
-    "portrait-ahmed": "ahmed",
-    "portrait-joseph": "joseph",
-    "portrait-kenza": "kenza",
-    "portrait-denzel": "denzel",
-    "portrait-arthur": "arthur",
-    "portrait-stanley": "stanley",
+    "portrait-devon":    "devon",
+    "portrait-ahmed":    "ahmed",
+    "portrait-joseph":   "joseph",
+    "portrait-kenza":    "kenza",
+    "portrait-denzel":   "denzel",
+    "portrait-arthur":   "arthur",
+    "portrait-stanley":  "stanley",
   };
   const slug = slugMap[spriteKey] ?? spriteKey.replace(/^portrait-/, "");
   const entry = CHARACTER_ASSETS[slug];
-  return versionCharacterPath(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
+  return versionPath(entry?.portrait ?? entry?.turnaround ?? entry?.sprite ?? null);
 };
 
-/** Resolve a specific animation frame path, falling back to idle then battleSprite */
+/**
+ * Return all ordered frame paths for an animation state.
+ * Falls back to [battleSprite] for characters without a frames map.
+ * Returns [] if nothing is found.
+ */
+export const getCharacterFrames = (
+  spriteKey: string,
+  animState: AnimState = "idle",
+): string[] => {
+  const slug = SPRITE_SLUG[spriteKey];
+  if (!slug) return [];
+  const entry = CHARACTER_ASSETS[slug];
+  if (!entry) return [];
+  if (!entry.frames) {
+    const fallback = versionPath(entry.battleSprite ?? entry.sprite ?? null);
+    return fallback ? [fallback] : [];
+  }
+  const stateFrames = entry.frames[animState] ?? entry.frames.idle ?? [];
+  return stateFrames.map(f => versionPath(f) ?? f);
+};
+
+/** Return the first frame path for an animation state (single-frame callers). */
 export const getCharacterFrame = (
   spriteKey: string,
   animState: AnimState = "idle",
 ): string | null => {
-  const slugMap: Record<string, string> = {
-    "sprite-hataalii": "hataalii",
-    "sprite-devon":    "devon",
-    "sprite-ahmed":    "ahmed",
-    "sprite-joseph":   "joseph",
-    "sprite-kenza":    "kenza",
-    "sprite-denzel":   "denzel",
-    "sprite-arthur":   "arthur",
-    "sprite-stanley":  "stanley",
-    "sprite-champion": "champion",
-    "sprite-ascended": "ascended",
-  };
-  const slug = slugMap[spriteKey];
-  if (!slug) return null;
-  const entry = CHARACTER_ASSETS[slug];
-  if (!entry?.frames) return versionCharacterPath(entry?.battleSprite ?? entry?.sprite ?? null);
-  return versionCharacterPath(entry.frames[animState] ?? entry.frames.idle ?? null);
+  const frames = getCharacterFrames(spriteKey, animState);
+  return frames[0] ?? null;
 };

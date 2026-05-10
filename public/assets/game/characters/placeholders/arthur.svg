@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="bg-a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A1208"/>
+      <stop offset="100%" stop-color="#0A0A0F"/>
+    </linearGradient>
+  </defs>
+  <!-- background -->
+  <rect width="64" height="64" fill="url(#bg-a)"/>
+  <!-- gold border -->
+  <rect x="1" y="1" width="62" height="62" fill="none" stroke="#C9A227" stroke-width="2" rx="3"/>
+  <!-- helm -->
+  <rect x="20" y="5" width="24" height="20" rx="2" fill="#1C1C2E"/>
+  <rect x="20" y="5" width="24" height="20" fill="none" stroke="#C9A227" stroke-width="1.5" rx="2"/>
+  <!-- visor slit -->
+  <rect x="23" y="14" width="18" height="4" fill="#C9A227" opacity="0.25"/>
+  <rect x="23" y="14" width="18" height="2" fill="#C9A227" opacity="0.6"/>
+  <!-- helm crest -->
+  <rect x="30" y="3" width="4" height="4" fill="#C9A227"/>
+  <!-- shield body -->
+  <rect x="12" y="27" width="40" height="28" rx="2" fill="#0F0F1E"/>
+  <rect x="12" y="27" width="40" height="28" fill="none" stroke="#C9A227" stroke-width="1.5" rx="2"/>
+  <!-- shield arc design -->
+  <path d="M 32 29 a 18 18 0 0 1 18 18 l-36 0 a 18 18 0 0 1 18 -18 z" fill="#1A1830" stroke="#C9A227" stroke-width="1"/>
+  <!-- shield center emblem -->
+  <polygon points="32,31 35,40 44,40 37,45 40,54 32,49 24,54 27,45 20,40 29,40" fill="#C9A227" opacity="0.85"/>
+  <!-- legs / greaves -->
+  <rect x="16" y="57" width="13" height="6" rx="1" fill="#1A1A2E"/>
+  <rect x="35" y="57" width="13" height="6" rx="1" fill="#1A1A2E"/>
+  <!-- role glyph top-right -->
+  <text x="59" y="11" text-anchor="middle" font-family="monospace" font-size="8" fill="#C9A227">◉</text>
+</svg>

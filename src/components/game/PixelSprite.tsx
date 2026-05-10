@@ -1,6 +1,13 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ASSET_BY_ID, computeSpriteStyle, resolveSpritePath } from "@/lib/assets";
-import { getCharacterFrame, type AnimState } from "@/data/characterAssets";
+import { getCharacterFrames, type AnimState } from "@/data/characterAssets";
 import { cn } from "@/lib/utils";
+
+/** ms per frame when cycling a multi-frame animation strip */
+const FRAME_MS = 150;
+
+/** These states loop indefinitely; all others play once then hold the last frame. */
+const LOOP_STATES = new Set<AnimState>(["idle", "walk"]);
 
 interface Props {
   spriteKey: string;
@@ -21,7 +28,57 @@ export function PixelSprite({
   const entry = ASSET_BY_ID[spriteKey];
 
   // ── Priority 1: sprite-sheet CSS clip (legacy items / icon grid) ───────────
-  const sliced = entry?.sourceSheet && entry.row != null && entry.col != null;
+  const sliced = !!(entry?.sourceSheet && entry.row != null && entry.col != null);
+
+  // ── Multi-frame cycling ────────────────────────────────────────────────────
+  // getCharacterFrames returns [] for non-character keys (e.g. items, enemies).
+  const frames = useMemo(
+    () => (sliced ? [] : getCharacterFrames(spriteKey, animState)),
+    [sliced, spriteKey, animState],
+  );
+
+  const [frameIdx, setFrameIdx] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    // Reset to first frame whenever the clip or animation changes.
+    setFrameIdx(0);
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    if (frames.length <= 1) return; // nothing to cycle
+
+    const loop = LOOP_STATES.has(animState);
+    let idx = 0;
+
+    intervalRef.current = setInterval(() => {
+      idx += 1;
+      if (idx >= frames.length) {
+        if (loop) {
+          idx = 0; // wrap around
+        } else {
+          // Play-once: hold last frame and stop the interval.
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          return;
+        }
+      }
+      setFrameIdx(idx);
+    }, FRAME_MS);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [frames, animState]); // frames identity changes only when spriteKey/animState change
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
   if (sliced) {
     return (
       <div
@@ -32,32 +89,29 @@ export function PixelSprite({
     );
   }
 
-  // ── Priority 2: character animation frame ──────────────────────────────────
-  // Only attempted for character sprite keys (those that have a frame map)
-  if (animState !== "idle" || spriteKey.startsWith("sprite-")) {
-    const framePath = getCharacterFrame(spriteKey, animState);
-    if (framePath) {
-      return (
-        <img
-          src={framePath}
-          alt={label || entry?.name || spriteKey}
-          className={cn("pixel object-contain", className)}
-          style={{ width: size, height: size, imageRendering: "pixelated" }}
-          onError={e => {
-            // Frame missing → fall through to idle, then manifest
-            const idle = getCharacterFrame(spriteKey, "idle");
-            if (idle && e.currentTarget.src !== idle) {
-              e.currentTarget.src = idle;
-            } else {
-              e.currentTarget.style.display = "none";
-            }
-          }}
-        />
-      );
-    }
+  // Priority 2: character animation frame (multi-frame or single)
+  const currentSrc = frames[frameIdx] ?? frames[0];
+  if (currentSrc) {
+    return (
+      <img
+        src={currentSrc}
+        alt={label || entry?.name || spriteKey}
+        className={cn("pixel object-contain", className)}
+        style={{ width: size, height: size, imageRendering: "pixelated" }}
+        onError={e => {
+          // Frame missing → fall back to first frame (idle f01), then hide.
+          const first = frames[0];
+          if (first && e.currentTarget.src !== first) {
+            e.currentTarget.src = first;
+          } else {
+            e.currentTarget.style.display = "none";
+          }
+        }}
+      />
+    );
   }
 
-  // ── Priority 3: direct PNG from manifest ───────────────────────────────────
+  // Priority 3: direct PNG / SVG from manifest
   const imgPath = resolveSpritePath(spriteKey);
   if (imgPath) {
     return (
@@ -73,7 +127,7 @@ export function PixelSprite({
     );
   }
 
-  // ── Priority 4: glyph placeholder ─────────────────────────────────────────
+  // Priority 4: glyph placeholder
   return (
     <div
       className={cn(
