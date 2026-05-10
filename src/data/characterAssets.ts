@@ -55,17 +55,16 @@ const SINGLE_STATES: AnimState[] = [
 
 /** Build a single-frame map (same image for every state) for a given slug. */
 const allFrames = (slug: string): CharacterFrames => {
-  const path = BATTLE_SPRITE[slug];
-  const frames: Record<string, string[]> = {};
-  for (const s of SINGLE_STATES) frames[s] = [path];
-  return frames as CharacterFrames;
+  const path = BATTLE_SPRITE[slug] ?? "";
+  return {
+    idle: [path], walk: [path], slash: [path], slash_heavy: [path], cast: [path],
+    hurt: [path], knockback: [path], victory: [path], defeat: [path], critical_hit: [path],
+  };
 };
 
 // ── Character registry ─────────────────────────────────────────────────────
 
-/** First non-empty idle frame for a sliced character. */
-const idleSprite = (slug: string): string =>
-  spriteFrames(slug, "idle")[0] ?? `/assets/game/characters/sprites/${slug}/idle.png`;
+const idleSprite = (slug: string): string => BATTLE_SPRITE[slug] ?? "";
 
 export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
