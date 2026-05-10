@@ -17,34 +17,51 @@ export type AnimState =
   | "defeat"
   | "critical_hit";
 
-// Each animation state maps to an ordered array of frame paths (f01 … f10).
-export interface CharacterFrames extends Partial<Record<AnimState, string[]>> {
-  idle: string[]; // idle is always required when frames map is present
-}
+// ── Used-frame map (auto-generated from sheet occupancy scan) ──────────────
+// Each entry lists the column indices (0-9) that are NOT blank in the source
+// 10×10 sheet for that animation row. Empty cells were never extracted to disk
+// and must not be referenced.
+const USED_FRAMES: Record<string, Record<AnimState, number[]>> = {
+  hataalii: {
+    idle: [1,2,3,4,5,7,8,9], walk: [0,1,2,3,4,5,6,7,8,9],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [1,2,3,4,7,9],
+    cast: [1,2,3,4,5,6,7,8,9], hurt: [0,1,2,3,4,5,7,8,9],
+    knockback: [0,1,2,3,4,5,7,8], victory: [0,1,2,3,4,5,6,8,9],
+    defeat: [0,1,2,3,4,5,7,8,9], critical_hit: [0,1,2,4,5,7,8,9],
+  },
+  devon: {
+    idle: [0,1,2,4,5,6], walk: [0,1,2,3,4,5,6],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,6,7,8,9],
+    cast: [0,1,2,3,4,5,6,7,8,9], hurt: [0,1,2,3,4,5,6,7,8],
+    knockback: [0,1,2,3,5,6,7,8,9], victory: [0,1,2,3,4,5,6,7,8,9],
+    defeat: [0,1,2,3,5,6,7,8,9], critical_hit: [0,1,2,3],
+  },
+  ahmed: {
+    idle: [0,1,2,3,4,5,7,8,9], walk: [1,4,5,6,7,8,9],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,7,8,9],
+    cast: [0,1,2,3,4,5,7,8,9], hurt: [1,2,4,5,6,7,8,9],
+    knockback: [1,2,6,7], victory: [1,2,3,5,6,7],
+    defeat: [1,2,3,5,6,7], critical_hit: [1,2,3,6,7],
+  },
+  kenza: {
+    idle: [0,1,2,3,4,5,6,7,8,9], walk: [1,3,4,5,6,7,8],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,6,7,8,9],
+    cast: [0,1,2,3,4,5,7,8], hurt: [1,2,3,4,5,6,7,8,9],
+    knockback: [1,2,3,4,5,6,7,8], victory: [1,2,3,4,5,6,7,8],
+    defeat: [1,2,3,6,7], critical_hit: [2,3,6,7,8],
+  },
+};
 
-export interface CharacterAssetEntry {
-  name: string;
-  slug: string;
-  sprite: string | null;          // idle frame (used as battle sprite)
-  portrait: string | null;        // portrait / turnaround art
-  turnaround: string | null;      // turnaround sheet
-  battleSprite: string | null;    // alias for sprite (backwards compat)
-  frames: CharacterFrames | null; // per-animation multi-frame paths
-  confidence: number;
-  notes: string;
-}
+const frameFile = (state: AnimState, col: number): string =>
+  col === 0 ? `${state}.png` : `${state}-f${String(col + 1).padStart(2, "0")}.png`;
 
-// ── Frame-array helpers ────────────────────────────────────────────────────
+/** Build the frame-paths array for one animation, skipping empty source cells. */
+const spriteFrames = (slug: string, state: AnimState): string[] => {
+  const cols = USED_FRAMES[slug]?.[state] ?? [0];
+  return cols.map(c => `/assets/game/characters/sprites/${slug}/${frameFile(state, c)}`);
+};
 
-/** Build a 10-frame array for one animation state from the /sprites/ dir. */
-const spriteFrames = (slug: string, state: AnimState): string[] => [
-  `/assets/game/characters/sprites/${slug}/${state}.png`,
-  ...Array.from({ length: 9 }, (_, i) =>
-    `/assets/game/characters/sprites/${slug}/${state}-f${String(i + 2).padStart(2, "0")}.png`
-  ),
-];
-
-/** Build the full 10-state × 10-frame map for a character slug. */
+/** Build the full 10-state frame map for a character slug. */
 const allFrames = (slug: string): CharacterFrames => ({
   idle:         spriteFrames(slug, "idle"),
   walk:         spriteFrames(slug, "walk"),
