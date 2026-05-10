@@ -17,6 +17,24 @@ export type AnimState =
   | "defeat"
   | "critical_hit";
 
+// Each animation state maps to an ordered array of frame paths (empty source
+// cells are dropped — see USED_FRAMES below).
+export interface CharacterFrames extends Partial<Record<AnimState, string[]>> {
+  idle: string[]; // idle is always required when frames map is present
+}
+
+export interface CharacterAssetEntry {
+  name: string;
+  slug: string;
+  sprite: string | null;
+  portrait: string | null;
+  turnaround: string | null;
+  battleSprite: string | null;
+  frames: CharacterFrames | null;
+  confidence: number;
+  notes: string;
+}
+
 // ── Used-frame map (auto-generated from sheet occupancy scan) ──────────────
 // Each entry lists the column indices (0-9) that are NOT blank in the source
 // 10×10 sheet for that animation row. Empty cells were never extracted to disk
