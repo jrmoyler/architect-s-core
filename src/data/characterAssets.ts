@@ -35,69 +35,36 @@ export interface CharacterAssetEntry {
   notes: string;
 }
 
-// ── Used-frame map (auto-generated from sheet occupancy scan) ──────────────
-// Each entry lists the column indices (0-9) that are NOT blank in the source
-// 10×10 sheet for that animation row. Empty cells were never extracted to disk
-// and must not be referenced.
-const USED_FRAMES: Record<string, Record<AnimState, number[]>> = {
-  hataalii: {
-    idle: [1,2,3,4,5,7,8,9], walk: [0,1,2,3,4,5,6,7,8,9],
-    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [1,2,3,4,7,9],
-    cast: [1,2,3,4,5,6,7,8,9], hurt: [0,1,2,3,4,5,7,8,9],
-    knockback: [0,1,2,3,4,5,7,8], victory: [0,1,2,3,4,5,6,8,9],
-    defeat: [0,1,2,3,4,5,7,8,9], critical_hit: [0,1,2,4,5,7,8,9],
-  },
-  devon: {
-    idle: [0,1,2,4,5,6], walk: [0,1,2,3,4,5,6],
-    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,6,7,8,9],
-    cast: [0,1,2,3,4,5,6,7,8,9], hurt: [0,1,2,3,4,5,6,7,8],
-    knockback: [0,1,2,3,5,6,7,8,9], victory: [0,1,2,3,4,5,6,7,8,9],
-    defeat: [0,1,2,3,5,6,7,8,9], critical_hit: [0,1,2,3],
-  },
-  ahmed: {
-    idle: [0,1,2,3,4,5,7,8,9], walk: [1,4,5,6,7,8,9],
-    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,7,8,9],
-    cast: [0,1,2,3,4,5,7,8,9], hurt: [1,2,4,5,6,7,8,9],
-    knockback: [1,2,6,7], victory: [1,2,3,5,6,7],
-    defeat: [1,2,3,5,6,7], critical_hit: [1,2,3,6,7],
-  },
-  kenza: {
-    idle: [0,1,2,3,4,5,6,7,8,9], walk: [1,3,4,5,6,7,8],
-    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,6,7,8,9],
-    cast: [0,1,2,3,4,5,7,8], hurt: [1,2,3,4,5,6,7,8,9],
-    knockback: [1,2,3,4,5,6,7,8], victory: [1,2,3,4,5,6,7,8],
-    defeat: [1,2,3,6,7], critical_hit: [2,3,6,7,8],
-  },
+// The original "sprite sheets" for the 4 sliced characters are actually
+// labeled illustration boards with 3-6 distinct full-character poses, not
+// uniform animation grids. Slicing them as 10×10 produced fragments. We now
+// use a single hand-cropped idle pose per character as the canonical battle
+// sprite, applied to every animation state. CSS effects in BattleScreen
+// (animate-bounce, animate-pulse, etc.) provide motion without per-frame art.
+const BATTLE_SPRITE: Record<string, string> = {
+  hataalii: "/assets/game/characters/battle/hataalii.png",
+  devon:    "/assets/game/characters/battle/devon.png",
+  ahmed:    "/assets/game/characters/battle/ahmed.png",
+  kenza:    "/assets/game/characters/battle/kenza.png",
 };
 
-const frameFile = (state: AnimState, col: number): string =>
-  col === 0 ? `${state}.png` : `${state}-f${String(col + 1).padStart(2, "0")}.png`;
+const SINGLE_STATES: AnimState[] = [
+  "idle","walk","slash","slash_heavy","cast",
+  "hurt","knockback","victory","defeat","critical_hit",
+];
 
-/** Build the frame-paths array for one animation, skipping empty source cells. */
-const spriteFrames = (slug: string, state: AnimState): string[] => {
-  const cols = USED_FRAMES[slug]?.[state] ?? [0];
-  return cols.map(c => `/assets/game/characters/sprites/${slug}/${frameFile(state, c)}`);
+/** Build a single-frame map (same image for every state) for a given slug. */
+const allFrames = (slug: string): CharacterFrames => {
+  const path = BATTLE_SPRITE[slug] ?? "";
+  return {
+    idle: [path], walk: [path], slash: [path], slash_heavy: [path], cast: [path],
+    hurt: [path], knockback: [path], victory: [path], defeat: [path], critical_hit: [path],
+  };
 };
-
-/** Build the full 10-state frame map for a character slug. */
-const allFrames = (slug: string): CharacterFrames => ({
-  idle:         spriteFrames(slug, "idle"),
-  walk:         spriteFrames(slug, "walk"),
-  slash:        spriteFrames(slug, "slash"),
-  slash_heavy:  spriteFrames(slug, "slash_heavy"),
-  cast:         spriteFrames(slug, "cast"),
-  hurt:         spriteFrames(slug, "hurt"),
-  knockback:    spriteFrames(slug, "knockback"),
-  victory:      spriteFrames(slug, "victory"),
-  defeat:       spriteFrames(slug, "defeat"),
-  critical_hit: spriteFrames(slug, "critical_hit"),
-});
 
 // ── Character registry ─────────────────────────────────────────────────────
 
-/** First non-empty idle frame for a sliced character. */
-const idleSprite = (slug: string): string =>
-  spriteFrames(slug, "idle")[0] ?? `/assets/game/characters/sprites/${slug}/idle.png`;
+const idleSprite = (slug: string): string => BATTLE_SPRITE[slug] ?? "";
 
 export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
