@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="bg-c" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1E1400"/>
+      <stop offset="100%" stop-color="#0A0A0F"/>
+    </linearGradient>
+    <linearGradient id="armor-c" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2A1F00"/>
+      <stop offset="100%" stop-color="#1A1200"/>
+    </linearGradient>
+  </defs>
+  <!-- background -->
+  <rect width="64" height="64" fill="url(#bg-c)"/>
+  <!-- thick gold border — champion rank -->
+  <rect x="1" y="1" width="62" height="62" fill="none" stroke="#C9A227" stroke-width="3" rx="3"/>
+  <rect x="4" y="4" width="56" height="56" fill="none" stroke="#C9A227" stroke-width="0.5" rx="2" opacity="0.4"/>
+  <!-- crown -->
+  <polygon points="14,18 14,8 22,14 32,6 42,14 50,8 50,18" fill="#C9A227"/>
+  <rect x="14" y="18" width="36" height="6" fill="#C9A227"/>
+  <!-- crown gems -->
+  <rect x="19" y="9" width="4" height="4" fill="#00E5FF" rx="1"/>
+  <rect x="30" y="7" width="4" height="4" fill="#00E5FF" rx="1"/>
+  <rect x="41" y="9" width="4" height="4" fill="#00E5FF" rx="1"/>
+  <!-- helm beneath crown -->
+  <rect x="18" y="24" width="28" height="12" rx="1" fill="url(#armor-c)" stroke="#C9A227" stroke-width="1"/>
+  <rect x="22" y="27" width="20" height="5" fill="#C9A227" opacity="0.2"/>
+  <!-- body armour -->
+  <rect x="12" y="38" width="40" height="20" rx="2" fill="url(#armor-c)"/>
+  <rect x="12" y="38" width="40" height="20" fill="none" stroke="#C9A227" stroke-width="1.5" rx="2"/>
+  <!-- chest star emblem -->
+  <polygon points="32,40 34,46 40,46 35,50 37,56 32,52 27,56 29,50 24,46 30,46" fill="#C9A227"/>
+  <!-- shoulder pads -->
+  <rect x="4" y="36" width="10" height="10" rx="2" fill="url(#armor-c)" stroke="#C9A227" stroke-width="1"/>
+  <rect x="50" y="36" width="10" height="10" rx="2" fill="url(#armor-c)" stroke="#C9A227" stroke-width="1"/>
+  <!-- leg guards -->
+  <rect x="16" y="59" width="14" height="4" rx="1" fill="#C9A227"/>
+  <rect x="34" y="59" width="14" height="4" rx="1" fill="#C9A227"/>
+  <!-- role glyph top-right -->
+  <text x="59" y="11" text-anchor="middle" font-family="monospace" font-size="9" fill="#C9A227">★</text>
+</svg>

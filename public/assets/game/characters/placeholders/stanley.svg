@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="bg-s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#0A0A0F"/>
+    </linearGradient>
+  </defs>
+  <!-- background -->
+  <rect width="64" height="64" fill="url(#bg-s)"/>
+  <!-- dual-tone border: cyan inner, gold corners -->
+  <rect x="1" y="1" width="62" height="62" fill="none" stroke="#00E5FF" stroke-width="2" rx="3"/>
+  <rect x="1" y="1" width="8" height="8" fill="#C9A227" rx="2"/>
+  <rect x="55" y="1" width="8" height="8" fill="#C9A227" rx="2"/>
+  <rect x="1" y="55" width="8" height="8" fill="#C9A227" rx="2"/>
+  <rect x="55" y="55" width="8" height="8" fill="#C9A227" rx="2"/>
+  <!-- head / goggles -->
+  <rect x="21" y="7" width="22" height="16" rx="2" fill="#162030"/>
+  <!-- goggle lenses -->
+  <rect x="23" y="10" width="7" height="6" rx="1" fill="#1A3040" stroke="#00E5FF" stroke-width="1"/>
+  <rect x="34" y="10" width="7" height="6" rx="1" fill="#1A3040" stroke="#00E5FF" stroke-width="1"/>
+  <rect x="30" y="12" width="4" height="2" fill="#00E5FF"/>
+  <!-- goggle shine -->
+  <rect x="24" y="11" width="2" height="2" fill="#00E5FF" opacity="0.7"/>
+  <rect x="35" y="11" width="2" height="2" fill="#00E5FF" opacity="0.7"/>
+  <!-- body / armored coat -->
+  <rect x="14" y="25" width="36" height="24" rx="2" fill="#0F1E30"/>
+  <rect x="14" y="25" width="36" height="24" fill="none" stroke="#00E5FF" stroke-width="1" rx="2"/>
+  <!-- gear badge on chest -->
+  <circle cx="32" cy="37" r="8" fill="#0A1520" stroke="#C9A227" stroke-width="1.5"/>
+  <circle cx="32" cy="37" r="4" fill="#162030" stroke="#C9A227" stroke-width="1"/>
+  <circle cx="32" cy="37" r="2" fill="#C9A227"/>
+  <!-- gear teeth (simplified) -->
+  <rect x="30" y="27" width="4" height="4" fill="#C9A227" rx="1"/>
+  <rect x="30" y="43" width="4" height="4" fill="#C9A227" rx="1"/>
+  <rect x="20" y="35" width="4" height="4" fill="#C9A227" rx="1"/>
+  <rect x="40" y="35" width="4" height="4" fill="#C9A227" rx="1"/>
+  <!-- wrench tool (left arm) -->
+  <rect x="8" y="30" width="4" height="14" rx="1" fill="#C9A227"/>
+  <rect x="6" y="28" width="8" height="4" rx="1" fill="#C9A227"/>
+  <!-- legs -->
+  <rect x="18" y="51" width="12" height="10" rx="1" fill="#0F1828"/>
+  <rect x="34" y="51" width="12" height="10" rx="1" fill="#0F1828"/>
+  <!-- boot accents -->
+  <rect x="18" y="59" width="12" height="2" fill="#C9A227"/>
+  <rect x="34" y="59" width="12" height="2" fill="#C9A227"/>
+  <!-- role glyph top-right -->
+  <text x="59" y="11" text-anchor="middle" font-family="monospace" font-size="8" fill="#00E5FF">⬡</text>
+</svg>
