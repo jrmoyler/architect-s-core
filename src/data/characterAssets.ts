@@ -38,33 +38,33 @@ export interface CharacterAssetEntry {
 // The original "sprite sheets" for the 4 sliced characters are actually
 // labeled illustration boards with 3-6 distinct full-character poses, not
 // uniform animation grids. Slicing them as 10×10 produced fragments. We now
-// use a single hand-cropped idle pose per character as the canonical battle
-// sprite, applied to every animation state. CSS effects in BattleScreen
-// (animate-bounce, animate-pulse, etc.) provide motion without per-frame art.
-const BATTLE_SPRITE: Record<string, string> = {
-  hataalii: "/assets/game/characters/battle/hataalii.png",
-  devon:    "/assets/game/characters/battle/devon.png",
-  ahmed:    "/assets/game/characters/battle/ahmed.png",
-  kenza:    "/assets/game/characters/battle/kenza.png",
-};
+// resolve battle sprites through the versioned BATTLE_SPRITES config
+// (see src/data/battleSpriteConfig.ts) — one canonical pose per character,
+// with optional per-state overrides for future hand-picked poses.
+// CSS effects in BattleScreen (animate-bounce, animate-pulse, etc.) provide
+// motion without per-frame art, so dropping in new poses never re-introduces
+// sprite-sheet fragmentation.
+import { resolveBattleSprite, BATTLE_SPRITES } from "./battleSpriteConfig";
 
-const SINGLE_STATES: AnimState[] = [
+const ALL_STATES: AnimState[] = [
   "idle","walk","slash","slash_heavy","cast",
   "hurt","knockback","victory","defeat","critical_hit",
 ];
 
-/** Build a single-frame map (same image for every state) for a given slug. */
-const allFrames = (slug: string): CharacterFrames => {
-  const path = BATTLE_SPRITE[slug] ?? "";
-  return {
-    idle: [path], walk: [path], slash: [path], slash_heavy: [path], cast: [path],
-    hurt: [path], knockback: [path], victory: [path], defeat: [path], critical_hit: [path],
-  };
+/** Build a frames map per state, honoring per-state overrides from the config. */
+const allFrames = (slug: string): CharacterFrames | null => {
+  if (!BATTLE_SPRITES[slug]) return null;
+  const map = {} as CharacterFrames;
+  for (const s of ALL_STATES) {
+    const path = resolveBattleSprite(slug, s);
+    (map as Record<AnimState, string[]>)[s] = path ? [path] : [];
+  }
+  return map;
 };
 
 // ── Character registry ─────────────────────────────────────────────────────
 
-const idleSprite = (slug: string): string => BATTLE_SPRITE[slug] ?? "";
+const idleSprite = (slug: string): string => resolveBattleSprite(slug, "idle") ?? "";
 
 export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
