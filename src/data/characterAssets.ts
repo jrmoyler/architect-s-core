@@ -95,50 +95,54 @@ const allFrames = (slug: string): CharacterFrames => ({
 
 // ── Character registry ─────────────────────────────────────────────────────
 
+/** First non-empty idle frame for a sliced character. */
+const idleSprite = (slug: string): string =>
+  spriteFrames(slug, "idle")[0] ?? `/assets/game/characters/sprites/${slug}/idle.png`;
+
 export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
     name: "Hataalii the Architect",
     slug: "hataalii",
-    sprite:       "/assets/game/characters/sprites/hataalii/idle.png",
+    sprite:       idleSprite("hataalii"),
     portrait:     "/assets/game/characters/turnarounds/1776824582721.png",
     turnaround:   "/assets/game/characters/turnarounds/1776824582721.png",
-    battleSprite: "/assets/game/characters/sprites/hataalii/idle.png",
+    battleSprite: idleSprite("hataalii"),
     frames: allFrames("hataalii"),
     confidence: 95,
-    notes: "Mage in gold/black robes with staff. 10 states × 10 frames confirmed.",
+    notes: "Mage in gold/black robes with staff. Frames map to populated source cells only.",
   },
   devon: {
     name: "Devon Scout",
     slug: "devon",
-    sprite:       "/assets/game/characters/sprites/devon/idle.png",
+    sprite:       idleSprite("devon"),
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/devon/idle.png",
+    battleSprite: idleSprite("devon"),
     frames: allFrames("devon"),
     confidence: 95,
-    notes: "Tactical athlete in cyan gear. 10 states × 10 frames confirmed.",
+    notes: "Tactical athlete in cyan gear. Frames map to populated source cells only.",
   },
   ahmed: {
     name: "Ahmed the Strategist",
     slug: "ahmed",
-    sprite:       "/assets/game/characters/sprites/ahmed/idle.png",
+    sprite:       idleSprite("ahmed"),
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/ahmed/idle.png",
+    battleSprite: idleSprite("ahmed"),
     frames: allFrames("ahmed"),
     confidence: 90,
-    notes: "Blue suit strategist. 10 states × 10 frames confirmed.",
+    notes: "Blue suit strategist. Frames map to populated source cells only.",
   },
   kenza: {
     name: "Kenza the Orchestrator",
     slug: "kenza",
-    sprite:       "/assets/game/characters/sprites/kenza/idle.png",
+    sprite:       idleSprite("kenza"),
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/kenza/idle.png",
+    battleSprite: idleSprite("kenza"),
     frames: allFrames("kenza"),
     confidence: 80,
-    notes: "Female in yellow blazer. 10 states × 10 frames confirmed.",
+    notes: "Female in yellow blazer. Frames map to populated source cells only.",
   },
   denzel: {
     name: "Denzel the Agent",
