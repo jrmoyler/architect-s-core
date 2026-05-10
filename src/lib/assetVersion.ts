@@ -5,7 +5,7 @@
 const ENV_VERSION =
   (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_ASSET_VERSION) || "";
 
-export const ASSET_VERSION: string = ENV_VERSION || "2026-05-09b";
+export const ASSET_VERSION: string = ENV_VERSION || "2026-05-10-reslice";
 
 /** Append `?v=<ASSET_VERSION>` to any same-origin asset URL.
  *  - Skips data: / blob: / external URLs
