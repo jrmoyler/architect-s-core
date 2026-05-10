@@ -17,7 +17,8 @@ export type AnimState =
   | "defeat"
   | "critical_hit";
 
-// Each animation state maps to an ordered array of frame paths (f01 … f10).
+// Each animation state maps to an ordered array of frame paths (empty source
+// cells are dropped — see USED_FRAMES below).
 export interface CharacterFrames extends Partial<Record<AnimState, string[]>> {
   idle: string[]; // idle is always required when frames map is present
 }
@@ -25,26 +26,60 @@ export interface CharacterFrames extends Partial<Record<AnimState, string[]>> {
 export interface CharacterAssetEntry {
   name: string;
   slug: string;
-  sprite: string | null;          // idle frame (used as battle sprite)
-  portrait: string | null;        // portrait / turnaround art
-  turnaround: string | null;      // turnaround sheet
-  battleSprite: string | null;    // alias for sprite (backwards compat)
-  frames: CharacterFrames | null; // per-animation multi-frame paths
+  sprite: string | null;
+  portrait: string | null;
+  turnaround: string | null;
+  battleSprite: string | null;
+  frames: CharacterFrames | null;
   confidence: number;
   notes: string;
 }
 
-// ── Frame-array helpers ────────────────────────────────────────────────────
+// ── Used-frame map (auto-generated from sheet occupancy scan) ──────────────
+// Each entry lists the column indices (0-9) that are NOT blank in the source
+// 10×10 sheet for that animation row. Empty cells were never extracted to disk
+// and must not be referenced.
+const USED_FRAMES: Record<string, Record<AnimState, number[]>> = {
+  hataalii: {
+    idle: [1,2,3,4,5,7,8,9], walk: [0,1,2,3,4,5,6,7,8,9],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [1,2,3,4,7,9],
+    cast: [1,2,3,4,5,6,7,8,9], hurt: [0,1,2,3,4,5,7,8,9],
+    knockback: [0,1,2,3,4,5,7,8], victory: [0,1,2,3,4,5,6,8,9],
+    defeat: [0,1,2,3,4,5,7,8,9], critical_hit: [0,1,2,4,5,7,8,9],
+  },
+  devon: {
+    idle: [0,1,2,4,5,6], walk: [0,1,2,3,4,5,6],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,6,7,8,9],
+    cast: [0,1,2,3,4,5,6,7,8,9], hurt: [0,1,2,3,4,5,6,7,8],
+    knockback: [0,1,2,3,5,6,7,8,9], victory: [0,1,2,3,4,5,6,7,8,9],
+    defeat: [0,1,2,3,5,6,7,8,9], critical_hit: [0,1,2,3],
+  },
+  ahmed: {
+    idle: [0,1,2,3,4,5,7,8,9], walk: [1,4,5,6,7,8,9],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,7,8,9],
+    cast: [0,1,2,3,4,5,7,8,9], hurt: [1,2,4,5,6,7,8,9],
+    knockback: [1,2,6,7], victory: [1,2,3,5,6,7],
+    defeat: [1,2,3,5,6,7], critical_hit: [1,2,3,6,7],
+  },
+  kenza: {
+    idle: [0,1,2,3,4,5,6,7,8,9], walk: [1,3,4,5,6,7,8],
+    slash: [0,1,2,3,4,5,6,7,8,9], slash_heavy: [0,1,2,3,4,5,6,7,8,9],
+    cast: [0,1,2,3,4,5,7,8], hurt: [1,2,3,4,5,6,7,8,9],
+    knockback: [1,2,3,4,5,6,7,8], victory: [1,2,3,4,5,6,7,8],
+    defeat: [1,2,3,6,7], critical_hit: [2,3,6,7,8],
+  },
+};
 
-/** Build a 10-frame array for one animation state from the /sprites/ dir. */
-const spriteFrames = (slug: string, state: AnimState): string[] => [
-  `/assets/game/characters/sprites/${slug}/${state}.png`,
-  ...Array.from({ length: 9 }, (_, i) =>
-    `/assets/game/characters/sprites/${slug}/${state}-f${String(i + 2).padStart(2, "0")}.png`
-  ),
-];
+const frameFile = (state: AnimState, col: number): string =>
+  col === 0 ? `${state}.png` : `${state}-f${String(col + 1).padStart(2, "0")}.png`;
 
-/** Build the full 10-state × 10-frame map for a character slug. */
+/** Build the frame-paths array for one animation, skipping empty source cells. */
+const spriteFrames = (slug: string, state: AnimState): string[] => {
+  const cols = USED_FRAMES[slug]?.[state] ?? [0];
+  return cols.map(c => `/assets/game/characters/sprites/${slug}/${frameFile(state, c)}`);
+};
+
+/** Build the full 10-state frame map for a character slug. */
 const allFrames = (slug: string): CharacterFrames => ({
   idle:         spriteFrames(slug, "idle"),
   walk:         spriteFrames(slug, "walk"),
@@ -60,50 +95,54 @@ const allFrames = (slug: string): CharacterFrames => ({
 
 // ── Character registry ─────────────────────────────────────────────────────
 
+/** First non-empty idle frame for a sliced character. */
+const idleSprite = (slug: string): string =>
+  spriteFrames(slug, "idle")[0] ?? `/assets/game/characters/sprites/${slug}/idle.png`;
+
 export const CHARACTER_ASSETS: Record<string, CharacterAssetEntry> = {
   hataalii: {
     name: "Hataalii the Architect",
     slug: "hataalii",
-    sprite:       "/assets/game/characters/sprites/hataalii/idle.png",
+    sprite:       idleSprite("hataalii"),
     portrait:     "/assets/game/characters/turnarounds/1776824582721.png",
     turnaround:   "/assets/game/characters/turnarounds/1776824582721.png",
-    battleSprite: "/assets/game/characters/sprites/hataalii/idle.png",
+    battleSprite: idleSprite("hataalii"),
     frames: allFrames("hataalii"),
     confidence: 95,
-    notes: "Mage in gold/black robes with staff. 10 states × 10 frames confirmed.",
+    notes: "Mage in gold/black robes with staff. Frames map to populated source cells only.",
   },
   devon: {
     name: "Devon Scout",
     slug: "devon",
-    sprite:       "/assets/game/characters/sprites/devon/idle.png",
+    sprite:       idleSprite("devon"),
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/devon/idle.png",
+    battleSprite: idleSprite("devon"),
     frames: allFrames("devon"),
     confidence: 95,
-    notes: "Tactical athlete in cyan gear. 10 states × 10 frames confirmed.",
+    notes: "Tactical athlete in cyan gear. Frames map to populated source cells only.",
   },
   ahmed: {
     name: "Ahmed the Strategist",
     slug: "ahmed",
-    sprite:       "/assets/game/characters/sprites/ahmed/idle.png",
+    sprite:       idleSprite("ahmed"),
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/ahmed/idle.png",
+    battleSprite: idleSprite("ahmed"),
     frames: allFrames("ahmed"),
     confidence: 90,
-    notes: "Blue suit strategist. 10 states × 10 frames confirmed.",
+    notes: "Blue suit strategist. Frames map to populated source cells only.",
   },
   kenza: {
     name: "Kenza the Orchestrator",
     slug: "kenza",
-    sprite:       "/assets/game/characters/sprites/kenza/idle.png",
+    sprite:       idleSprite("kenza"),
     portrait:     null,
     turnaround:   null,
-    battleSprite: "/assets/game/characters/sprites/kenza/idle.png",
+    battleSprite: idleSprite("kenza"),
     frames: allFrames("kenza"),
     confidence: 80,
-    notes: "Female in yellow blazer. 10 states × 10 frames confirmed.",
+    notes: "Female in yellow blazer. Frames map to populated source cells only.",
   },
   denzel: {
     name: "Denzel the Agent",
